@@ -13,7 +13,7 @@ repo_url: https://github.com/dannymaaz/easypanel-mcp
 edit_uri: edit/main/docs/
 
 # Copyright
-copyright: "Desarrollado y mantenido por Danny Maaz &copy; 2026. Todos los derechos reservados."
+copyright: "Desarrollado y mantenido por Danny Maaz &copy; <span id='current-year'>2026</span>. Todos los derechos reservados."
 
 # Theme configuration
 theme:
@@ -61,6 +61,10 @@ theme:
 # Custom CSS
 extra_css:
   - assets/css/custom.css
+
+# Custom JS
+extra_javascript:
+  - assets/js/custom.js
 
 # SEO & Social Meta Tags
 extra:

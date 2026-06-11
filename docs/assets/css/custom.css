@@ -650,3 +650,173 @@
     border: 1px solid #ccc;
   }
 }
+
+/* ============================================
+   UX Improvements: Centered Footer & Social Icons
+   ============================================ */
+.md-footer-meta__inner {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  gap: 1.25rem !important;
+  padding: 1.5rem 0 !important;
+}
+
+.md-copyright {
+  margin: 0 auto !important;
+  text-align: center !important;
+}
+
+.md-social {
+  margin: 0 auto !important;
+}
+
+/* ============================================
+   UX Improvements: Dynamic Link List (Compact Grid)
+   ============================================ */
+.doc-link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.doc-link-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.8rem !important;
+  border-radius: 6px !important;
+  background-color: var(--md-default-bg-color) !important;
+  border: 1px solid var(--md-border-color-sutil) !important;
+  color: var(--md-typeset-color) !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+  border-bottom: none !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: var(--md-shadow-sm);
+  box-sizing: border-box;
+}
+
+.doc-link-item:hover {
+  background-color: var(--md-accent-fg-color--transparent) !important;
+  border-color: var(--md-primary-fg-color) !important;
+  padding-left: 1rem !important;
+  transform: translateY(-1px);
+  box-shadow: var(--md-shadow-md);
+}
+
+.doc-link-item svg {
+  fill: var(--md-typeset-color--light) !important;
+  width: 14px;
+  height: 14px;
+  transition: fill 0.2s ease;
+}
+
+.doc-link-item:hover svg {
+  fill: var(--md-primary-fg-color) !important;
+}
+
+/* ============================================
+   UX Improvements: Navigation & Table of Contents Hover Highlights
+   ============================================ */
+.md-nav__link {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  border-radius: 6px !important;
+  padding: 0.35rem 0.50rem !important;
+}
+
+.md-nav__link:hover {
+  background-color: var(--md-accent-fg-color--transparent) !important;
+  color: var(--md-primary-fg-color) !important;
+  padding-left: 0.85rem !important;
+}
+
+.md-nav__link--active:hover {
+  padding-left: 0.85rem !important;
+}
+
+/* ============================================
+   UX Improvements: Integration Buttons Spacing
+   ============================================ */
+.quick-links {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 1.25rem 1.5rem !important;
+  justify-content: center !important;
+  margin: 3rem 0 !important;
+}
+
+.quick-links a {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 48px !important;
+  padding: 0.75rem 1.75rem !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+}
+
+/* ============================================
+   UX Improvements: Premium Language Switch Button & Hidden Translation Frames
+   ============================================ */
+/* Hide Google Translate Banner and Iframe */
+iframe.goog-te-banner-frame,
+iframe.goog-te-banner,
+.goog-te-banner-frame,
+.goog-te-balloon-frame {
+  display: none !important;
+}
+
+body {
+  top: 0px !important;
+}
+
+.skiptranslate iframe {
+  display: none !important;
+}
+
+.goog-te-gadget {
+  display: none !important;
+}
+
+.goog-te-menu-value {
+  display: none !important;
+}
+
+/* Custom Lang Toggle Button Styling */
+.lang-toggle-btn {
+  background: transparent;
+  border: 1px solid var(--md-border-color-sutil) !important;
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  color: var(--md-header-fg-color) !important;
+  font-weight: 700;
+  font-size: 0.75rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-right: 0.75rem;
+  height: 32px;
+  box-shadow: var(--md-shadow-sm);
+  outline: none;
+}
+
+.lang-toggle-btn:hover {
+  background-color: var(--md-search-bg-color) !important;
+  transform: translateY(-1px);
+}
+
+.lang-toggle-btn svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+.lang-toggle-btn .lang-text {
+  letter-spacing: 0.05em;
+}

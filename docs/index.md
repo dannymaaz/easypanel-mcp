@@ -153,47 +153,57 @@ python src/server.py http
 
 <div class="card" markdown>
 #### :material-rocket-launch: Getting Started
-- [Instalación](getting-started/installation.md)
-- [Configuración](getting-started/configuration.md)
-- [Quick Start](getting-started/quickstart.md)
+<div class="doc-link-list" markdown>
+[:material-chevron-right: Instalación](getting-started/installation.md){: .doc-link-item }
+[:material-chevron-right: Configuración](getting-started/configuration.md){: .doc-link-item }
+[:material-chevron-right: Quick Start](getting-started/quickstart.md){: .doc-link-item }
+</div>
 </div>
 
 <div class="card" markdown>
 #### :material-tools: Tools Reference
-- [Overview](tools/overview.md) - 30 herramientas en 7 categorías
-- [Services Tools](tools/services.md) - 10 herramientas (create, deploy, logs)
-- [Deployments Tools](tools/deployments.md) - 4 herramientas
-- [Networks Tools](tools/networks.md) - 3 herramientas (auto-discovery)
-- [Projects Tools](tools/projects.md) - 4 herramientas
-- [Monitoring Tools](tools/overview.md#monitoring-tools) - 4 herramientas (stats, health)
-- [Scaling Tools](tools/overview.md#scaling-tools) - 2 herramientas (auto-scale)
-- [Security Tools](tools/overview.md#security-tools) - 3 herramientas (domains, Git)
+<div class="doc-link-list" markdown>
+[:material-chevron-right: Overview](tools/overview.md){: .doc-link-item }
+[:material-chevron-right: Servicios](tools/services.md){: .doc-link-item }
+[:material-chevron-right: Despliegues](tools/deployments.md){: .doc-link-item }
+[:material-chevron-right: Redes](tools/networks.md){: .doc-link-item }
+[:material-chevron-right: Proyectos](tools/projects.md){: .doc-link-item }
+[:material-chevron-right: Monitoreo](tools/overview.md#monitoring-tools){: .doc-link-item }
+[:material-chevron-right: Escalado](tools/overview.md#scaling-tools){: .doc-link-item }
+[:material-chevron-right: Seguridad](tools/overview.md#security-tools){: .doc-link-item }
+</div>
 </div>
 
 <div class="card" markdown>
 #### :material-lightbulb: Examples
-- [Basic Examples](examples/basic.md)
-- [Advanced Workflows](examples/advanced.md)
-- [Real-World Cases](examples/real-world.md)
+<div class="doc-link-list" markdown>
+[:material-chevron-right: Ejemplos Básicos](examples/basic.md){: .doc-link-item }
+[:material-chevron-right: Workflows Avanzados](examples/advanced.md){: .doc-link-item }
+[:material-chevron-right: Casos Reales](examples/real-world.md){: .doc-link-item }
+</div>
 </div>
 
 <div class="card" markdown>
 #### :material-tune: Advanced Features
-- [Seguridad & Redes](advanced/features.md) - Autenticación y redes aisladas
-- [Guía de Despliegue](advanced/features.md#caracteristicas-de-despliegue) - Docker, GitHub, Git
-- [Depuración](advanced/features.md#caracteristicas-de-depuracion) - Logs, diagnóstico en tiempo real
-- [Escalado Automático](advanced/features.md#caracteristicas-de-escalado) - Ajuste vertical y automático
+<div class="doc-link-list" markdown>
+[:material-chevron-right: Seguridad & Redes](advanced/features.md){: .doc-link-item }
+[:material-chevron-right: Guía de Despliegue](advanced/features.md#caracteristicas-de-despliegue){: .doc-link-item }
+[:material-chevron-right: Depuración](advanced/features.md#caracteristicas-de-depuracion){: .doc-link-item }
+[:material-chevron-right: Escalado Automático](advanced/features.md#caracteristicas-de-escalado){: .doc-link-item }
 </div>
-
+</div>
 
 <div class="card" markdown>
 #### :material-help-circle: Support
-- [FAQ](faq.md)
-- [Troubleshooting](troubleshooting.md)
-- [Changelog](changelog.md)
+<div class="doc-link-list" markdown>
+[:material-chevron-right: FAQ](faq.md){: .doc-link-item }
+[:material-chevron-right: Troubleshooting](troubleshooting.md){: .doc-link-item }
+[:material-chevron-right: Changelog](changelog.md){: .doc-link-item }
+</div>
 </div>
 
 </div>
+
 
 ---
 
