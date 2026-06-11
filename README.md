@@ -1,199 +1,94 @@
-# 🚀 EasyPanel MCP Server
+# EasyPanel MCP Server
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white" alt="Python Version">
-  <img src="https://img.shields.io/badge/MCP-Protocol-green?logo=anthropic&logoColor=white" alt="MCP Protocol">
-  <img src="https://img.shields.io/badge/EasyPanel-Compatible-orange?logo=docker&logoColor=white" alt="EasyPanel Compatible">
-  <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License">
-  <br>
-  <img src="https://img.shields.io/badge/Windows%20%7C%20macOS%20%7C%20Linux-cross--platform-lightgrey" alt="Cross-platform">
-  <img src="https://img.shields.io/badge/AI%20Agents-Claude%2FGPT%2Fn8n-purple?logo=openai&logoColor=white" alt="AI Agents">
-</p>
+[![Python Version](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![MCP Protocol](https://img.shields.io/badge/MCP-Protocol-green?logo=anthropic&logoColor=white)](https://modelcontextprotocol.io/)
+[![EasyPanel Compatible](https://img.shields.io/badge/EasyPanel-Compatible-orange?logo=docker&logoColor=white)](https://easypanel.io/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](#)
 
-<p align="center">
-  <strong>🤖 Conecta tu Agente de IA con EasyPanel y despliega infraestructura con prompts naturales</strong>
-</p>
-
-<p align="center">
-  <em>Transforma la manera en que gestionas tu infraestructura: de líneas de comando a conversaciones naturales con IA</em>
-</p>
-
-<p align="center">
-  <a href="https://dannymaaz.github.io/easypanel-mcp/"><strong>📚 Ver Documentación Completa</strong></a>
-</p>
+Servidor de **Model Context Protocol (MCP)** para **EasyPanel**. Este conector permite a clientes de inteligencia artificial y entornos de automatización gestionar infraestructura, desplegar servicios, configurar redes y monitorear recursos mediante la API tRPC de EasyPanel en lenguaje natural.
 
 ---
 
-## 📖 ¿Qué es EasyPanel MCP?
+## Descripción General
 
-**EasyPanel MCP** es un servidor de **Model Context Protocol (MCP)** que permite a agentes de inteligencia artificial (Claude, GPT, n8n, etc.) interactuar directamente con tu panel **EasyPanel** para gestionar infraestructura, desplegar servicios y administrar contenedores Docker mediante comandos naturales.
+Este servidor implementa el estándar abierto **Model Context Protocol (MCP)** desarrollado por Anthropic para ofrecer herramientas de DevOps automatizadas. Permite a agentes de IA interactuar directamente con tu instancia de EasyPanel de forma local y segura, automatizando tareas complejas de administración de servidores, despliegues y diagnósticos.
 
-### 🔑 Características Principales
+### Características Principales
 
-- ✅ **Control Total por Voz/Texto**: "Despliega mi API Flask con PostgreSQL"
-- ✅ **Multi-Plataforma**: Funciona en Windows, macOS y Linux
-- ✅ **Fácil Integración**: Compatible con Claude Desktop, Cursor, Cline, n8n, y cualquier cliente MCP
-- ✅ **Redes Aisladas**: Soporte para redes internas Docker seguras (auto-descubrimiento)
-- ✅ **Auto-Scaling**: Escala servicios basado en demanda con umbrales configurables
-- ✅ **Debugging Asistido**: La IA puede analizar logs, diagnosticar problemas y sugerir soluciones
-- ✅ **GitHub Actions**: Trigger de deployments automáticos desde tu repositorio
-- ✅ **Service Logs**: Obtención inteligente de logs vía inspección de servicio
-- ✅ **Network Discovery**: Descubrimiento automático de topología de redes
-- ✅ **Resource Monitoring**: Monitoreo en tiempo real de CPU, memoria y disco
+*   **Gestión Completa de Servicios:** Listado, inspección, creación, actualización, detención y reinicio de aplicaciones y bases de datos.
+*   **Manejo Inteligente de Recursos:** Detección automática y ruteo de namespaces tRPC según el tipo de servicio (`app`, `postgres`, `redis`, `mysql`, `mongodb`, `mariadb`).
+*   **Auto-Scaling Automatizado:** Escalado vertical de CPU y memoria basado en métricas y límites definidos.
+*   **Análisis y Debugging:** Recuperación de logs estructurados e información de despliegue para auditoría y diagnóstico de fallos en tiempo real.
+*   **Descubrimiento de Redes:** Análisis automático de topologías de comunicación interna y pública de Docker.
+*   **Soporte Multicliente:** Diseñado tanto para transporte local de flujo estándar (`stdio`) como para conexión remota vía Server-Sent Events (`sse`/`http`).
 
 ---
 
-## ⚡ Instalación Rápida
+## Instalación y Configuración
 
 ### 1. Clonar el repositorio
-
 ```bash
 git clone https://github.com/dannymaaz/easypanel-mcp
 cd easypanel-mcp
 ```
 
-### 2. Crear entorno virtual
+### 2. Configurar el entorno virtual e instalar
+Recomendamos usar un entorno virtual para aislar las dependencias:
 
-```bash
-# Windows
+**En Windows (PowerShell):**
+```powershell
 python -m venv venv
-venv\Scripts\activate
-
-# macOS/Linux
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### 3. Instalar dependencias
-
-```bash
+.\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
-### 4. Configurar variables de entorno
-
+**En macOS / Linux:**
 ```bash
-# Copiar archivo de ejemplo
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+### 3. Configurar variables de entorno
+Crea un archivo `.env` en la raíz del proyecto basándote en el ejemplo provisto:
+```bash
 cp .env.example .env
-
-# Editar .env con tus credenciales de EasyPanel
 ```
 
-### 5. ¡Ejecutar el servidor! 🎉
+Edita el archivo `.env` configurando los accesos a tu EasyPanel:
+```env
+# URL de acceso a tu instancia (ej. https://panel.tudominio.com)
+EASYPANEL_URL=https://tu-easypanel.com
 
-```bash
-# Modo stdio (para Claude Desktop, etc.)
-python src/server.py
+# Token de API o credenciales en formato email:password
+EASYPANEL_API_KEY=tu_api_key_aqui
 
-# Modo HTTP (para n8n, webhooks)
-python src/server.py http
-```
+# Parámetros adicionales
+EASYPANEL_TIMEOUT=30
+EASYPANEL_VERIFY_SSL=true
 
----
-
-## 🎯 Casos de Uso Reales
-
-### ✅ Agentes de Desarrollo
-
-```
-Usuario: "Despliega mi API Flask con PostgreSQL en producción"
-IA: 🚀 Creando proyecto 'api-flask-prod'
-   📦 Desplegando servicio 'postgres-db' con imagen postgres:15
-   🔗 Creando red interna 'api-net' para comunicación segura
-   ⚙️ Configurando servicio 'flask-api' con variables de entorno
-   ✅ ¡Deploy completado! Tu API está disponible en https://api.tudominio.com
-```
-
-### ✅ Auto-Scaling Inteligente
-
-```
-IA (monitoreando): "Detecto un incremento del 300% en tráfico hacia el servicio worker"
-IA (acción): 🔄 Escalando servicio 'worker' automáticamente
-   📊 CPU usage: 95% → threshold 80% superado
-   💾 Memory: 7.2GB / 8GB → threshold 90% superado
-   📈 Escalando: CPU 2 → 4 cores, RAM 8GB → 16GB
-   ⏱️ Tiempo de respuesta: 2.1 segundos
-```
-
-### ✅ Debugging Asistido
-
-```
-Usuario: "¿Por qué falla el servicio worker?"
-IA: 🔍 Analizando logs del servicio 'worker'...
-
-   📊 Service Status:
-   - Status: error
-   - State: crashed
-   - Deployment: failed
-   
-   ❌ Error encontrado: ConnectionRefusedError - No se puede conectar a Redis
-   📋 Últimos logs:
-     - "Attempting to connect to redis:6379..."
-     - "Connection timeout after 30s"
-     - "Retry 1/3 failed"
-
-   💡 Solución sugerida: El servicio Redis no está corriendo.
-   Diagnóstico:
-   - Redis service: stopped
-   - Puerto 6379: no listening
-   - Network: internal-net (OK)
-   
-   ¿Quieres que:
-   1. Inicie el servicio 'redis-cache'?
-   2. Reconfigure la conexión?
-   3. Escale los recursos de Redis?
-```
-
-### ✅ Prototipado Rápido
-
-```
-Usuario: "Necesito un entorno de staging para probar la nueva versión"
-IA: 🎨 Creando entorno de staging...
-   ✅ Proyecto 'myapp-staging' creado
-   ✅ Servicio 'app' desplegado con imagen myapp:v2.0.0-beta
-   ✅ Base de datos 'staging_db' inicializada
-   🔗 Red interna: staging-net (isolated)
-   🔗 URL: https://staging.myapp.com
-   ⏱️ Tiempo total: 45 segundos
-```
-
-### ✅ Monitoreo en Tiempo Real
-
-```
-Usuario: "¿Cómo está el rendimiento de mi servicio?"
-IA: 📊 Analizando métricas en tiempo real...
-
-   System Stats (últimos 5 min):
-   - CPU: 45% average, 78% peak
-   - Memory: 4.2GB / 8GB (52%)
-   - Disk: 29.7GB / 309.9GB (9.6%)
-   - Network: 1.2GB in, 3.4GB out
-   
-   Service Health:
-   - api-service: ✅ healthy (99.9% uptime)
-   - worker: ✅ healthy
-   - postgres-db: ✅ healthy
-   
-   💡 Recomendación: Todo funcionando correctamente
-   Próximas acciones sugeridas:
-   - Programar backup en 2 horas
-   - Actualizar certificado SSL en 15 días
+# Configuración del servidor MCP
+MCP_HOST=127.0.0.1
+MCP_PORT=8080
+MCP_LOG_LEVEL=INFO
 ```
 
 ---
 
-## 🔧 Configuración con Agentes de IA
+## Configuración en Clientes MCP
 
-### Claude Desktop
+### 1. Antigravity IDE
+Para integrar el servidor en **Antigravity**, añade la ruta del script en la configuración del gestor de plugins de MCP.
 
-Agrega la siguiente configuración a tu archivo `claude_desktop_config.json`:
+Asegúrate de apuntar al ejecutable de Python de tu entorno virtual (`venv`) para que localice las dependencias instaladas:
 
 ```json
 {
   "mcpServers": {
-    "easypanel": {
-      "command": "python",
-      "args": ["/ruta/completa/a/easypanel-mcp/src/server.py"],
+    "easypanel-mcp": {
+      "command": "C:\\ruta\\a\\easypanel-mcp\\venv\\Scripts\\python.exe",
+      "args": ["C:\\ruta\\a\\easypanel-mcp\\src\\server.py"],
       "env": {
         "EASYPANEL_URL": "https://tu-easypanel.com",
         "EASYPANEL_API_KEY": "tu_api_key"
@@ -203,257 +98,124 @@ Agrega la siguiente configuración a tu archivo `claude_desktop_config.json`:
 }
 ```
 
-### n8n Workflow
+### 2. Cursor / VS Code (Extensiones Cline & Roo Code)
+En editores compatibles con OpenCode o extensiones de agentes inteligentes:
+
+1.  Abre el panel de configuración de la extensión (ej. en **Roo Code**, ve a *Settings* > *MCP Servers*).
+2.  Añade una nueva configuración de servidor:
+    *   **Name:** `easypanel`
+    *   **Type:** `command`
+    *   **Command:** `python` (o la ruta al ejecutable de tu `venv`)
+    *   **Args:** `["/ruta/absoluta/a/easypanel-mcp/src/server.py"]`
+    *   **Environment Variables:**
+        *   `EASYPANEL_URL`: `https://tu-easypanel.com`
+        *   `EASYPANEL_API_KEY`: `tu_api_key`
+
+### 3. Claude Desktop
+Añade el servidor al archivo de configuración de Claude Desktop (`claude_desktop_config.json`):
+
+**En Windows:** `%APPDATA%\Claude\claude_desktop_config.json`  
+**En macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
 
 ```json
 {
-  "nodes": [
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "http://localhost:8080/mcp",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "method",
-              "value": "tools/call"
-            },
-            {
-              "name": "params.name",
-              "value": "create_service"
-            }
-          ]
-        }
-      },
-      "name": "EasyPanel MCP",
-      "type": "n8n-nodes-base.httpRequest"
+  "mcpServers": {
+    "easypanel-mcp": {
+      "command": "python",
+      "args": ["/ruta/absoluta/a/easypanel-mcp/src/server.py"],
+      "env": {
+        "EASYPANEL_URL": "https://tu-easypanel.com",
+        "EASYPANEL_API_KEY": "tu_api_key"
+      }
     }
-  ]
+  }
 }
 ```
 
-### GitHub Actions
-
-```yaml
-# .github/workflows/deploy.yml
-name: Deploy via MCP
-
-on:
-  push:
-    branches: [main]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to EasyPanel via MCP
-        run: |
-          curl -X POST http://tu-mcp-server:8080/mcp \
-            -H "Content-Type: application/json" \
-            -d '{
-              "method": "tools/call",
-              "params": {
-                "name": "create_deployment",
-                "arguments": {
-                  "project_id": "${{ secrets.EASYPANEL_PROJECT_ID }}",
-                  "service_id": "${{ secrets.EASYPANEL_SERVICE_ID }}",
-                  "image": "mi-app:${{ github.sha }}"
-                }
-              }
-            }'
+### 4. n8n (Integración remota vía SSE)
+Si deseas desplegarlo de forma dedicada como servicio remoto, inicia el servidor en modo HTTP:
+```bash
+python src/server.py http
 ```
 
----
+Esto levantará el servidor en `http://127.0.0.1:8080` utilizando Server-Sent Events (SSE). Puedes integrarlo en nodos HTTP de n8n o sistemas externos realizando peticiones estructuradas al endpoint de herramientas:
 
-## 🛠️ Herramientas Disponibles
-
-| Categoría | Herramientas | Descripción |
-|-----------|--------------|-------------|
-| 📦 **Servicios** | `list_services`, `get_service`, `create_service`, `update_service`, `delete_service`, `restart_service`, `start_service`, `stop_service`, `deploy_service`, `get_service_logs` | Gestión completa + logs inteligentes |
-| 🚀 **Deployments** | `list_deployments`, `create_deployment`, `get_deployment`, `get_deployment_logs` | Control de deployments y versiones |
-| 🌐 **Redes** | `list_networks` (auto-discovery), `create_network`, `delete_network` | Descubrimiento automático de topología |
-| 📁 **Proyectos** | `list_projects`, `create_project`, `delete_project`, `get_project` | Organización de recursos |
-| 📊 **Monitoring** | `get_system_stats`, `get_service_stats`, `health_check`, `get_server_ip` | Métricas en tiempo real |
-| ⚡ **Scaling** | `scale_service`, `auto_scale_service` | Escalado vertical y automático |
-| 🔒 **Security** | `list_domains`, `create_domain`, `get_public_key` | Dominios y autenticación Git |
-
-**Total: 25+ herramientas** disponibles para gestionar tu infraestructura con IA.
-
----
-
-## 🔒 Seguridad y Redes Aisladas
-
-### 🔐 Autenticación y Seguridad
-
-EasyPanel MCP soporta **dos métodos de autenticación**:
-
-1. **API Key (Recomendado)**: Más seguro, rotación fácil
-2. **Email:Password**: Alternativa sin generar keys
-
-### 🌐 Redes Aisladas (Auto-Discovery)
-
-EasyPanel MCP ahora incluye **descubrimiento automático de redes** analizando la topología de servicios:
-
-```python
-# La IA puede descubrir redes automáticamente
-networks = await client.list_networks()
-
-# Resultado:
-# - project-net (public): 3 servicios expuestos
-# - project-net-internal (private): 2 servicios aislados
-```
-
-**Características:**
-- ✅ **Detección automática**: Clasifica servicios como públicos o internos
-- ✅ **Sin configuración manual**: EasyPanel gestiona redes automáticamente
-- ✅ **Aislamiento seguro**: Servicios sin puertos públicos = aislados
-
-### Ejemplo de Configuración
-
-```yaml
-# Servicio Público (accesible desde internet)
-api-service:
-  image: myapp/api:latest
-  ports:
-    - "8080:8080"  # Puerto público
-  # → Clasificado como: PUBLIC
-
-# Servicio Interno (aislado)
-postgres-db:
-  image: postgres:15
-  ports: []  # Sin puertos públicos
-  # → Clasificado como: INTERNAL
-  # → Solo accesible por otros servicios en el mismo proyecto
-```
+*   **Endpoint:** `http://localhost:8080/mcp`
+*   **Formato de petición:**
+    ```json
+    {
+      "method": "tools/call",
+      "params": {
+        "name": "list_services",
+        "arguments": {
+          "project_id": "mi-proyecto"
+        }
+      }
+    }
+    ```
 
 ---
 
-## 📚 Documentación Completa
+## Ejemplos Prácticos de Uso
 
-La documentación detallada está disponible en:
+Una vez conectado, puedes interactuar directamente con tu agente haciéndole peticiones de infraestructura basadas en la vida real:
 
-👉 **[https://dannymaaz.github.io/easypanel-mcp/](https://dannymaaz.github.io/easypanel-mcp/)**
+### Despliegue de Aplicaciones
+> **Usuario:** "Despliega un servicio frontend usando la imagen nginx:alpine en el proyecto principal."  
+> **IA (Interno):** Invoca `create_service(name="frontend", project_id="principal", image="nginx:alpine")` y posteriormente `deploy_service`.  
+> **IA (Respuesta):** *"He creado y desplegado el servicio 'frontend' exitosamente en tu proyecto. Está listo para recibir configuración de dominio."*
 
-Incluye:
-- Guía de configuración paso a paso
-- Referencia completa de herramientas
-- Ejemplos de integración con n8n
-- Templates de workflows
-- FAQ y troubleshooting
+### Diagnóstico de Caídas
+> **Usuario:** "¿Por qué el servicio backend está fallando?"  
+> **IA (Interno):** Invoca `get_service_logs(service_id="backend")`.  
+> **IA (Respuesta):** *"El servicio backend reporta un estado 'crashed' debido al siguiente error en consola: 'ConnectionRefusedError: No se pudo establecer conexión con redis-cache en el puerto 6379'. ¿Deseas que verifique si el contenedor de Redis está detenido?"*
+
+### Monitoreo y Escalado
+> **Usuario:** "Verifica las estadísticas del sistema y escala el servicio backend si el uso de CPU es alto."  
+> **IA (Interno):** Invoca `get_system_stats()` seguido de `scale_service(service_id="backend", cpu=2, memory=4096)`.
 
 ---
 
-## 🧪 Testing y Verificación
+## Herramientas Disponibles
 
-### Verificar Conexión
+| Categoría | Herramienta | Parámetros | Descripción |
+| :--- | :--- | :--- | :--- |
+| **Servicios** | `list_services` | `project_id` (opcional) | Lista todos los servicios y sus estados. |
+| | `get_service` | `service_id` (requerido) | Obtiene la configuración detallada de un servicio. |
+| | `create_service` | `name`, `project_id`, `image`, `config` | Crea un nuevo servicio (soporta apps y DBs). |
+| | `update_service` | `service_id`, `config` | Modifica configuraciones de entorno, puertos y recursos. |
+| | `delete_service` | `service_id` | Remueve un servicio de EasyPanel. |
+| | `restart_service` | `service_id` | Reinicia de inmediato el contenedor de la aplicación. |
+| | `get_service_logs` | `service_id`, `lines` (opcional) | Obtiene los últimos logs de consola del contenedor. |
+| **Despliegues** | `list_deployments`| `project_id` (opcional) | Lista el historial de despliegues. |
+| | `create_deployment`| `project_id`, `service_id`, `image` | Lanza un nuevo despliegue actualizando la imagen. |
+| **Redes** | `list_networks` | - | Descubre la topología de red Docker pública/interna. |
+| **Proyectos** | `list_projects` | - | Lista los proyectos creados en la instancia. |
+| | `create_project` | `name`, `description` (opcional) | Crea un nuevo proyecto organizador. |
+| **Monitoreo** | `get_system_stats`| - | Obtiene estadísticas en tiempo real de CPU, RAM y disco. |
+| **Escalado** | `scale_service` | `service_id`, `cpu`, `memory` | Escala verticalmente los recursos asignados. |
+| | `auto_scale_service`| `service_id`, `cpu_threshold`, `memory_threshold` | Escala dinámicamente según la carga actual. |
+| **Seguridad** | `list_domains` | - | Lista los dominios asignados en la instancia. |
+| | `get_public_key` | - | Obtiene la clave SSH pública para despliegues Git. |
+
+---
+
+## Verificación del Entorno
+
+Para verificar la conectividad de la API y el estado de la configuración sin arrancar el servidor MCP completo, puedes ejecutar la suite de pruebas unitarias:
 
 ```bash
-# Ejecutar script de test (solo lectura, sin cambios)
-python test_connection.py
-
-# Expected output:
-# ✅ Connected successfully!
-# ✅ Found 3 project(s)
-# ✅ Found 0 service(s)
-# ✅ System info retrieved
-# ✅ ALL TESTS PASSED
-```
-
-### Tests Unitarios
-
-```bash
-# Instalar dependencias de desarrollo
-pip install -r requirements-dev.txt
-
-# Ejecutar tests
-pytest
-
-# Con coverage
-pytest --cov=src --cov-report=html
-```
-
-### Verificar Configuración
-
-```bash
-# Test de configuración
-python -c "from config import config; print('Config OK')"
-
-# Test de conexión directa
-python -c "
-import asyncio
-from src.client import EasyPanelClient
-from config import config
-
-async def test():
-    client = EasyPanelClient(config.easypanel)
-    await client.connect()
-    print('EasyPanel healthy:', await client.health_check())
-    await client.disconnect()
-
-asyncio.run(test())
-"
+python -m pytest tests/test_basic.py -v
 ```
 
 ---
 
-## 🤝 Contribuir
+## Autor
 
-¡Las contribuciones son bienvenidas! Por favor:
-
-1. Fork el repositorio
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+*   **Danny Maaz** - [LinkedIn](https://linkedin.com/in/dannymaaz) • [GitHub](https://github.com/dannymaaz)
 
 ---
 
-## 👤 Autor & Créditos
+## Licencia
 
-<p align="center">
-<strong>Danny Maaz</strong><br>
-<em>Ingeniero en Sistemas | Creador de EasyPanel MCP</em><br><br>
-
-🔗 <a href="https://linkedin.com/in/dannymaaz">LinkedIn</a> •
-💻 <a href="https://github.com/dannymaaz">GitHub</a>
-</p>
-
----
-
-## 💙 Apoya el Proyecto
-
-<p align="center">
-<a href="https://www.paypal.me/Creativegt">
-<img src="https://img.shields.io/badge/Donate-PayPal-00457C?logo=paypal&logoColor=white" alt="Donar con PayPal">
-</a>
-</p>
-
-<p align="center">
-<em>🙏 Cada donación ayuda a mantener el proyecto activo y agregar nuevas features.</em>
-</p>
-
----
-
-## 📰 Keywords para Búsqueda
-
-**Para motores de búsqueda y AI assistants:**
-
-EasyPanel MCP, MCP Server, AI infrastructure management, Docker deployment automation, Claude AI integration, GPT infrastructure, n8n EasyPanel, AI DevOps, natural language deployment, container orchestration AI, EasyPanel API, Model Context Protocol, AI agent tools, automated scaling, self-hosted panel, VPS management, Docker Swarm AI, GitHub Actions deployment, webhook automation, Python MCP server, cross-platform DevOps
-
----
-
-## 📜 Licencia
-
-MIT License con cláusula de atribución. Ver [LICENSE](LICENSE) para detalles.
-
----
-
-<p align="center">
-<strong>🚀 Construido con ❤️ por Danny Maaz</strong><br>
-<em>Transformando prompts en infraestructura, una línea a la vez.</em>
-</p>
-
-<p align="center">
-<a href="#-easypanel-mcp-server">⬆️ Volver al inicio</a>
-</p>
+Este proyecto está bajo la Licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.

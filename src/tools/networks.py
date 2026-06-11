@@ -1,139 +1,75 @@
 """
 Networks Tool Module.
 
-Provides tools for managing EasyPanel networks.
+Provides tools for managing EasyPanel networks using the FastMCP registration style.
 """
 
 import logging
 from typing import Any
+from mcp.server.fastmcp import FastMCP
 from src.client import EasyPanelClient
 
 logger = logging.getLogger(__name__)
 
 
-class NetworksTools:
-    """Tools for managing networks in EasyPanel."""
+def register_tools(mcp: FastMCP, client: EasyPanelClient) -> None:
+    """
+    Register networks tools on the FastMCP instance.
     
-    def __init__(self, client: EasyPanelClient):
+    Args:
+        mcp: FastMCP server instance
+        client: EasyPanel API client
+    """
+    
+    @mcp.tool(name="list_networks")
+    async def list_networks() -> dict[str, Any]:
         """
-        Initialize networks tools.
+        List all networks in EasyPanel.
+        """
+        networks = await client.list_networks()
+        return {
+            "success": True,
+            "data": networks,
+            "message": f"Found {len(networks)} networks"
+        }
+    
+    @mcp.tool(name="create_network")
+    async def create_network(
+        name: str,
+        internal: bool = False,
+        driver: str = "overlay"
+    ) -> dict[str, Any]:
+        """
+        Create a new network in EasyPanel. Use internal=true for isolated networks.
         
         Args:
-            client: EasyPanel API client
+            name: Network name
+            internal: Whether the network is internal (isolated from internet)
+            driver: Network driver (overlay, bridge, etc.)
         """
-        self.client = client
+        network = await client.create_network(
+            name=name,
+            internal=internal,
+            driver=driver
+        )
+        network_type = "internal (isolated)" if internal else "public"
+        return {
+            "success": True,
+            "data": network,
+            "message": f"Network '{name}' created as {network_type} network"
+        }
     
-    def get_tool_definitions(self) -> list[dict[str, Any]]:
+    @mcp.tool(name="delete_network")
+    async def delete_network(network_id: str) -> dict[str, Any]:
         """
-        Get MCP tool definitions for networks.
-        
-        Returns:
-            List of tool definitions
-        """
-        return [
-            {
-                "name": "list_networks",
-                "description": "List all networks in EasyPanel",
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {}
-                }
-            },
-            {
-                "name": "create_network",
-                "description": "Create a new network in EasyPanel. Use internal=true for isolated networks",
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {
-                        "name": {
-                            "type": "string",
-                            "description": "Network name"
-                        },
-                        "internal": {
-                            "type": "boolean",
-                            "description": "Whether the network is internal (isolated from internet)",
-                            "default": False
-                        },
-                        "driver": {
-                            "type": "string",
-                            "description": "Network driver (overlay, bridge, etc.)",
-                            "default": "overlay"
-                        }
-                    },
-                    "required": ["name"]
-                }
-            },
-            {
-                "name": "delete_network",
-                "description": "Delete a network from EasyPanel",
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {
-                        "network_id": {
-                            "type": "string",
-                            "description": "Network ID"
-                        }
-                    },
-                    "required": ["network_id"]
-                }
-            }
-        ]
-    
-    async def execute(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
-        """
-        Execute a network tool.
+        Delete a network from EasyPanel.
         
         Args:
-            name: Tool name
-            arguments: Tool arguments
-            
-        Returns:
-            Tool execution result
+            network_id: Network ID
         """
-        try:
-            if name == "list_networks":
-                networks = await self.client.list_networks()
-                return {
-                    "success": True,
-                    "data": networks,
-                    "message": f"Found {len(networks)} networks"
-                }
-            
-            elif name == "create_network":
-                name_param = arguments.get("name")
-                internal = arguments.get("internal", False)
-                driver = arguments.get("driver", "overlay")
-                
-                network = await self.client.create_network(
-                    name=name_param,
-                    internal=internal,
-                    driver=driver
-                )
-                network_type = "internal (isolated)" if internal else "public"
-                return {
-                    "success": True,
-                    "data": network,
-                    "message": f"Network '{name_param}' created as {network_type} network"
-                }
-            
-            elif name == "delete_network":
-                network_id = arguments.get("network_id")
-                result = await self.client.delete_network(network_id)
-                return {
-                    "success": True,
-                    "data": result,
-                    "message": f"Network {network_id} deleted successfully"
-                }
-            
-            else:
-                return {
-                    "success": False,
-                    "error": f"Unknown tool: {name}"
-                }
-        
-        except Exception as e:
-            logger.error(f"Error executing tool {name}: {e}")
-            return {
-                "success": False,
-                "error": str(e)
-            }
+        result = await client.delete_network(network_id)
+        return {
+            "success": True,
+            "data": result,
+            "message": f"Network {network_id} deleted successfully"
+        }

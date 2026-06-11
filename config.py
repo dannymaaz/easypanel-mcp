@@ -44,8 +44,18 @@ class Config:
     def from_env(cls) -> "Config":
         """Create configuration from environment variables."""
         return cls(
-            easypanel=EasyPanelConfig(),
-            server=ServerConfig()
+            easypanel=EasyPanelConfig(
+                base_url=os.getenv("EASYPANEL_URL", "http://localhost:3000"),
+                api_key=os.getenv("EASYPANEL_API_KEY", ""),
+                timeout=int(os.getenv("EASYPANEL_TIMEOUT", "30")),
+                verify_ssl=os.getenv("EASYPANEL_VERIFY_SSL", "true").lower() == "true"
+            ),
+            server=ServerConfig(
+                host=os.getenv("MCP_HOST", "127.0.0.1"),
+                port=int(os.getenv("MCP_PORT", "8080")),
+                log_level=os.getenv("MCP_LOG_LEVEL", "INFO"),
+                debug=os.getenv("MCP_DEBUG", "false").lower() == "true"
+            )
         )
     
     def validate(self) -> bool:

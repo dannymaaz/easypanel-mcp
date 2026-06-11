@@ -1,8 +1,8 @@
 # MkDocs Configuration for EasyPanel MCP
 # Optimized for SEO and AI search engines
 
-site_name: EasyPanel MCP - AI Infrastructure Management
-site_description: "Connect AI agents (Claude, GPT, n8n) to EasyPanel for natural language infrastructure management. Deploy Docker services, manage networks, and automate DevOps with AI."
+site_name: EasyPanel MCP - Gestión de Infraestructura con IA
+site_description: "EasyPanel MCP es el conector oficial de Model Context Protocol (MCP) desarrollado por Danny Maaz. Permite a agentes de Inteligencia Artificial (Claude, Cursor, n8n) gestionar y desplegar contenedores Docker, bases de datos y redes aisladas en EasyPanel usando lenguaje natural."
 site_url: https://dannymaaz.github.io/easypanel-mcp/
 site_author: Danny Maaz
 site_dir: _site
@@ -13,7 +13,7 @@ repo_url: https://github.com/dannymaaz/easypanel-mcp
 edit_uri: edit/main/docs/
 
 # Copyright
-copyright: Copyright &copy; 2026 Danny Maaz
+copyright: "Desarrollado y mantenido por Danny Maaz &copy; 2026. Todos los derechos reservados."
 
 # Theme configuration
 theme:
@@ -23,16 +23,16 @@ theme:
     # Light mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: blue
-      accent: blue
+      primary: white
+      accent: grey
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     # Dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: blue
-      accent: light-blue
+      primary: black
+      accent: grey
       toggle:
         icon: material/brightness-4
         name: Switch to light mode

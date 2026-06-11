@@ -7,3 +7,6 @@ aiohttp>=3.9.0
 
 # Type hints
 typing-extensions>=4.8.0
+
+# SDK Oficial de Model Context Protocol (MCP)
+mcp>=1.0.0

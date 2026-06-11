@@ -4,28 +4,29 @@ description: Complete guide to security, isolated networks, deployment, debuggin
 keywords: EasyPanel security, isolated networks, auto-scaling, debugging, deployment, Docker, advanced features
 ---
 
-# 🚀 Advanced Features Guide
+# Guía de Características Avanzadas
 
-This guide covers **security**, **isolated networks**, **deployment**, **debugging**, **auto-scaling**, and how to use EasyPanel MCP with **Antigravity IDE** and other AI-powered development tools.
+Esta guía detalla las funciones avanzadas de **seguridad**, **redes aisladas**, **despliegue**, **depuración**, **escalado automático** y la integración de EasyPanel MCP con IDEs modernos.
 
 ---
 
-## 🔒 Security Features
+## Características de Seguridad
 
-### Available Security Tools
+### Herramientas de Seguridad Disponibles
 
-EasyPanel MCP provides the following security-related capabilities:
+EasyPanel MCP ofrece las siguientes capacidades relacionadas con la seguridad:
 
-| Feature | Status | Description |
-|---------|--------|-------------|
-| **API Key Authentication** | ✅ Available | Secure Bearer token authentication |
-| **Email/Password Auth** | ✅ Available | Alternative authentication method |
-| **Session Management** | ✅ Available | Automatic session token handling |
-| **SSL/TLS Verification** | ✅ Available | Configurable SSL verification |
-| **Internal Networks** | ⚠️ Via Service Config | Isolated networks via service configuration |
-| **Basic Auth** | ✅ Available | HTTP basic auth for services |
-| **Domain Management** | ✅ Available | Custom domain configuration |
-| **Port Exposure Control** | ✅ Available | Manage exposed ports |
+| Característica | Estado | Descripción |
+|---|---|---|
+| **Autenticación por API Key** | :material-check-circle: Disponible | Autenticación segura mediante Bearer token |
+| **Autenticación por Email/Password** | :material-check-circle: Disponible | Método de autenticación alternativo |
+| **Gestión de Sesiones** | :material-check-circle: Disponible | Manejo automático del token de sesión |
+| **Verificación SSL/TLS** | :material-check-circle: Disponible | Verificación SSL configurable |
+| **Redes Internas** | :material-alert: Vía Config de Servicio | Redes aisladas a través de la configuración del servicio |
+| **Autenticación Básica (Basic Auth)** | :material-check-circle: Disponible | Autenticación básica HTTP para servicios |
+| **Gestión de Dominios** | :material-check-circle: Disponible | Configuración de dominios personalizados |
+| **Control de Exposición de Puertos** | :material-check-circle: Disponible | Gestión de puertos expuestos |
+
 
 ### Security Best Practices
 
@@ -95,7 +96,7 @@ Control which ports are exposed:
 
 ---
 
-## 🌐 Isolated Networks
+## Redes Aisladas
 
 ### How EasyPanel Handles Networks
 
@@ -158,7 +159,7 @@ DATABASE_URL=postgres://user:pass@postgres-db:5432/mydb
 
 ---
 
-## 🚀 Deployment Features
+## Características de Despliegue
 
 ### Available Deployment Tools
 
@@ -225,7 +226,7 @@ AI: 📥 Fetching from GitLab...
 
 ---
 
-## 🐛 Debugging Features
+## Características de Depuración
 
 ### Available Debugging Tools
 
@@ -313,7 +314,7 @@ AI: 📜 Retrieving logs...
 
 ---
 
-## 📈 Auto-Scaling Features
+## Características de Escalado
 
 ### Scaling Options in EasyPanel
 
@@ -395,7 +396,7 @@ async def auto_scale():
 
 ---
 
-## 🛠️ Antigravity IDE Integration
+## Integración con IDEs (Antigravity/Cursor)
 
 ### What is Antigravity IDE?
 
@@ -489,7 +490,7 @@ Fixing...
 
 ---
 
-## 🔧 Solving Problems & Deploying to GitHub
+## Resolución de Problemas y Despliegues de Git
 
 ### Workflow: Fix Problem → Commit → Deploy
 
@@ -563,7 +564,7 @@ Configuration:
 
 ---
 
-## 📋 Feature Availability Summary
+## Resumen de Disponibilidad de Características
 
 | Feature | Available | Notes |
 |---------|-----------|-------|
@@ -588,7 +589,7 @@ Configuration:
 
 ---
 
-## 🆘 Troubleshooting
+## Resolución de Problemas (Troubleshooting)
 
 ### Feature Not Available
 
@@ -630,7 +631,7 @@ AI: 🔍 Analyzing deployment...
 
 ---
 
-## 📚 Related Documentation
+## Documentación Relacionada
 
 - **[AI Agents Integration](../integration/ai-agents.md)** - Connect with Claude, Cursor, etc.
 - **[Configuration Guide](../getting-started/configuration.md)** - Setup and configuration
