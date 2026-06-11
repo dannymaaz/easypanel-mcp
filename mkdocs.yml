@@ -8,7 +8,7 @@ site_author: Danny Maaz
 site_dir: _site
 
 # Repository
-repo_name: dannymaaz/easypanel-mcp
+repo_name: EasyPanel MCP
 repo_url: https://github.com/dannymaaz/easypanel-mcp
 edit_uri: edit/main/docs/
 

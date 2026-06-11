@@ -9,44 +9,44 @@
    ============================================ */
 :root {
   /* Brand grayscale primary */
-  --md-primary-fg-color: #000000;
-  --md-primary-fg-color--light: #374151;
-  --md-primary-fg-color--dark: #000000;
+  --md-primary-fg-color: #000000 !important;
+  --md-primary-fg-color--light: #374151 !important;
+  --md-primary-fg-color--dark: #000000 !important;
 
   /* Accent grayscale */
-  --md-accent-fg-color: #111827;
-  --md-accent-fg-color--transparent: rgba(17, 24, 39, 0.05);
+  --md-accent-fg-color: #111827 !important;
+  --md-accent-fg-color--transparent: rgba(17, 24, 39, 0.05) !important;
 
   /* Background colors */
-  --md-default-bg-color: #FFFFFF;
-  --md-default-bg-color--light: #F9FAFB;
-  --md-default-bg-color--dark: #111827;
+  --md-default-bg-color: #FFFFFF !important;
+  --md-default-bg-color--light: #F9FAFB !important;
+  --md-default-bg-color--dark: #111827 !important;
 
   /* Text colors */
-  --md-typeset-color: #111827;
-  --md-typeset-color--light: #4B5563;
+  --md-typeset-color: #111827 !important;
+  --md-typeset-color--light: #4B5563 !important;
 
-  /* Code blocks */
-  --md-code-bg-color: #1F2937;
-  --md-code-fg-color: #F9FAFB;
-  --md-code-hl-color: #4B5563;
+  /* Code blocks - High contrast for light mode */
+  --md-code-bg-color: #F8FAFC !important;
+  --md-code-fg-color: #0F172A !important;
+  --md-code-hl-color: #334155 !important;
 
   /* Header & Navigation Translúcido (Glassmorphism) */
-  --md-header-bg-color: rgba(255, 255, 255, 0.8);
-  --md-header-fg-color: #000000;
-  --md-search-bg-color: rgba(0, 0, 0, 0.05);
+  --md-header-bg-color: rgba(255, 255, 255, 0.85) !important;
+  --md-header-fg-color: #000000 !important;
+  --md-search-bg-color: rgba(0, 0, 0, 0.05) !important;
 
   /* Borders & Dividers */
-  --md-border-color-sutil: #E5E7EB;
-  --md-th-bg-color: #111827;
-  --md-th-fg-color: #FFFFFF;
+  --md-border-color-sutil: #E5E7EB !important;
+  --md-th-bg-color: #111827 !important;
+  --md-th-fg-color: #FFFFFF !important;
 
   /* Buttons */
-  --md-button-bg-color: #000000;
-  --md-button-fg-color: #FFFFFF;
-  --md-button-border-color: #000000;
-  --md-button-hover-bg-color: #374151;
-  --md-button-hover-fg-color: #FFFFFF;
+  --md-button-bg-color: #000000 !important;
+  --md-button-fg-color: #FFFFFF !important;
+  --md-button-border-color: #000000 !important;
+  --md-button-hover-bg-color: #374151 !important;
+  --md-button-hover-fg-color: #FFFFFF !important;
 
   /* Shadows */
   --md-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -58,38 +58,51 @@
   --md-border-radius-lg: 12px;
 }
 
-/* Dark mode adjustments */
+/* Dark mode adjustments - Pure Black Theme */
 [data-md-color-scheme="slate"] {
-  --md-primary-fg-color: #FFFFFF;
-  --md-primary-fg-color--light: #E5E7EB;
-  --md-primary-fg-color--dark: #FFFFFF;
+  --md-primary-fg-color: #FFFFFF !important;
+  --md-primary-fg-color--light: #E5E7EB !important;
+  --md-primary-fg-color--dark: #FFFFFF !important;
 
-  --md-accent-fg-color: #9CA3AF;
-  --md-accent-fg-color--transparent: rgba(255, 255, 255, 0.08);
+  --md-accent-fg-color: #FFFFFF !important;
+  --md-accent-fg-color--transparent: rgba(255, 255, 255, 0.08) !important;
 
-  --md-default-bg-color: #0A0A0A;
-  --md-default-bg-color--light: #161616;
+  --md-default-bg-color: #000000 !important;
+  --md-default-bg-color--light: #0D0D0D !important;
+  --md-default-bg-color--dark: #000000 !important;
 
-  --md-typeset-color: #F9FAFB;
-  --md-typeset-color--light: #9CA3AF;
+  --md-typeset-color: #F9FAFB !important;
+  --md-typeset-color--light: #9CA3AF !important;
 
-  --md-code-bg-color: #121212;
-  --md-code-fg-color: #F3F4F6;
-  --md-code-hl-color: #9CA3AF;
+  /* Code blocks - High contrast for dark mode */
+  --md-code-bg-color: #0F0F0F !important;
+  --md-code-fg-color: #F1F5F9 !important;
+  --md-code-hl-color: #FFFFFF !important;
 
-  --md-header-bg-color: rgba(10, 10, 10, 0.8);
-  --md-header-fg-color: #FFFFFF;
-  --md-search-bg-color: rgba(255, 255, 255, 0.08);
+  --md-header-bg-color: rgba(0, 0, 0, 0.9) !important;
+  --md-header-fg-color: #FFFFFF !important;
+  --md-search-bg-color: #1A1A1A !important;
 
-  --md-border-color-sutil: #262626;
-  --md-th-bg-color: #1A1A1A;
-  --md-th-fg-color: #FFFFFF;
+  --md-border-color-sutil: #222222 !important;
+  --md-th-bg-color: #121212 !important;
+  --md-th-fg-color: #FFFFFF !important;
 
-  --md-button-bg-color: #FFFFFF;
-  --md-button-fg-color: #000000;
-  --md-button-border-color: #FFFFFF;
-  --md-button-hover-bg-color: #E5E7EB;
-  --md-button-hover-fg-color: #000000;
+  --md-button-bg-color: #FFFFFF !important;
+  --md-button-fg-color: #000000 !important;
+  --md-button-border-color: #FFFFFF !important;
+  --md-button-hover-bg-color: #E5E7EB !important;
+  --md-button-hover-fg-color: #000000 !important;
+}
+
+/* Forzar fondos negros en modo oscuro para los componentes de la interfaz de Material */
+[data-md-color-scheme="slate"] body, 
+[data-md-color-scheme="slate"] .md-container, 
+[data-md-color-scheme="slate"] .md-main,
+[data-md-color-scheme="slate"] .md-sidebar,
+[data-md-color-scheme="slate"] .md-footer,
+[data-md-color-scheme="slate"] .md-footer-meta,
+[data-md-color-scheme="slate"] .md-nav {
+  background-color: #000000 !important;
 }
 
 /* ============================================
@@ -116,8 +129,10 @@
 .md-typeset h5,
 .md-typeset h6 {
   font-weight: 700;
-  color: var(--md-primary-fg-color);
+  color: var(--md-primary-fg-color) !important;
   letter-spacing: -0.025em;
+  background: none !important;
+  -webkit-text-fill-color: initial !important;
 }
 
 [data-md-color-scheme="slate"] .md-typeset h1,
@@ -129,10 +144,6 @@
 .md-typeset h1 {
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
-  background: linear-gradient(135deg, var(--md-primary-fg-color) 0%, var(--md-primary-fg-color--light) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 .md-typeset h2 {
@@ -172,10 +183,15 @@
   background-color: var(--md-header-bg-color) !important;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--md-border-color-sutil);
-  box-shadow: var(--md-shadow-sm);
+  border-bottom: 1px solid var(--md-border-color-sutil) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
   color: var(--md-header-fg-color) !important;
   transition: background-color 0.3s, border-color 0.3s;
+}
+
+[data-md-color-scheme="slate"] .md-header {
+  border-bottom: 1px solid #1F1F1F !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45) !important;
 }
 
 .md-header__button {
@@ -224,11 +240,18 @@
 /* ============================================
    Code Blocks
    ============================================ */
+.md-typeset pre {
+  margin: 1.5rem 0 !important;
+}
+
 .md-typeset pre>code {
   border-radius: var(--md-border-radius);
   box-shadow: var(--md-shadow-sm);
   font-size: 0.85rem;
-  border: 1px solid var(--md-border-color-sutil);
+  border: 1px solid var(--md-border-color-sutil) !important;
+  background-color: var(--md-code-bg-color) !important;
+  color: var(--md-code-fg-color) !important;
+  padding: 1rem !important;
 }
 
 .md-typeset code {
@@ -246,22 +269,23 @@
 
 /* Code block header */
 .md-typeset .highlight span.filename {
-  background-color: var(--md-default-bg-color--light);
-  border-bottom: 1px solid var(--md-border-color-sutil);
+  background-color: var(--md-code-bg-color) !important;
+  border-bottom: 1px solid var(--md-border-color-sutil) !important;
   padding: 0.5rem 1rem;
   font-size: 0.75rem;
-  color: var(--md-typeset-color--light);
+  color: var(--md-typeset-color--light) !important;
   border-radius: var(--md-border-radius) var(--md-border-radius) 0 0;
+  font-weight: 600;
 }
 
 /* Copy button */
 .md-clipboard {
-  color: var(--md-typeset-color--light);
+  color: var(--md-typeset-color--light) !important;
   transition: color 0.2s ease;
 }
 
 .md-clipboard:hover {
-  color: var(--md-primary-fg-color);
+  color: var(--md-primary-fg-color) !important;
 }
 
 /* ============================================
@@ -421,29 +445,42 @@
    ============================================ */
 .md-typeset .badge {
   display: inline-block;
-  padding: 0.25em 0.75em;
-  border-radius: 9999px;
+  padding: 0.3em 0.8em;
+  border-radius: 4px !important;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  border: 1px solid var(--md-border-color-sutil) !important;
+  transition: all 0.2s ease;
 }
 
+/* Modo claro - Badges */
 .md-typeset .badge--primary {
-  background-color: var(--md-primary-fg-color--light);
-  color: var(--md-default-bg-color);
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+  border-color: #000000 !important;
 }
 
-.md-typeset .badge--success {
-  background-color: rgba(16, 185, 129, 0.1);
-  color: #047857;
-  border: 1px solid rgba(16, 185, 129, 0.2);
-}
-
+.md-typeset .badge--success,
 .md-typeset .badge--warning {
-  background-color: rgba(245, 158, 11, 0.1);
-  color: #B45309;
-  border: 1px solid rgba(245, 158, 11, 0.2);
+  background-color: #F3F4F6 !important;
+  color: #111827 !important;
+  border-color: #E5E7EB !important;
+}
+
+/* Modo oscuro - Badges */
+[data-md-color-scheme="slate"] .md-typeset .badge--primary {
+  background-color: #FFFFFF !important;
+  color: #000000 !important;
+  border-color: #FFFFFF !important;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .badge--success,
+[data-md-color-scheme="slate"] .md-typeset .badge--warning {
+  background-color: #121212 !important;
+  color: #F9FAFB !important;
+  border-color: #222222 !important;
 }
 
 /* ============================================
