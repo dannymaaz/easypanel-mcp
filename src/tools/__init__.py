@@ -8,6 +8,7 @@ from src.tools.services import register_tools as register_services_tools
 from src.tools.deployments import register_tools as register_deployments_tools
 from src.tools.networks import register_tools as register_networks_tools
 from src.tools.projects import register_tools as register_projects_tools
+from src.tools.system import register_tools as register_system_tools
 from mcp.server.fastmcp import FastMCP
 from src.client import EasyPanelClient
 
@@ -15,7 +16,7 @@ from src.client import EasyPanelClient
 def register_all_tools(mcp: FastMCP, client: EasyPanelClient) -> None:
     """
     Register all modular tools in the FastMCP instance.
-    
+
     Args:
         mcp: FastMCP server instance
         client: EasyPanel API client
@@ -24,6 +25,7 @@ def register_all_tools(mcp: FastMCP, client: EasyPanelClient) -> None:
     register_deployments_tools(mcp, client)
     register_networks_tools(mcp, client)
     register_projects_tools(mcp, client)
+    register_system_tools(mcp, client)
 
 
 __all__ = [
@@ -31,5 +33,6 @@ __all__ = [
     "register_services_tools",
     "register_deployments_tools",
     "register_networks_tools",
-    "register_projects_tools"
+    "register_projects_tools",
+    "register_system_tools",
 ]

@@ -9,4 +9,5 @@ aiohttp>=3.9.0
 typing-extensions>=4.8.0
 
 # SDK Oficial de Model Context Protocol (MCP)
-mcp>=1.0.0
+# >=1.2 required for tool annotations (ToolAnnotations: readOnlyHint/destructiveHint/...)
+mcp>=1.2.0
