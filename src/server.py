@@ -5,10 +5,10 @@ Main server implementation using the official Model Context Protocol (MCP) SDK.
 Provides AI agents with tools to manage EasyPanel infrastructure.
 """
 
-import asyncio
 import logging
 import sys
-from typing import Optional
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 
 from mcp.server.fastmcp import FastMCP
 from config import config
@@ -28,31 +28,40 @@ config.validate()
 # Initialize EasyPanel client
 client = EasyPanelClient(config.easypanel)
 
-# Initialize FastMCP Server
+
+@asynccontextmanager
+async def lifespan(server: FastMCP) -> AsyncIterator[None]:
+    """
+    Manage the EasyPanel connection lifecycle.
+
+    FastMCP no longer exposes @on_startup/@on_shutdown decorators; the supported
+    way to run startup/shutdown logic is a lifespan async context manager passed
+    to the FastMCP constructor.
+    """
+    logger.info("Starting EasyPanel MCP Server...")
+    await client.connect()
+    logger.info("Connected to EasyPanel at %s", config.easypanel.base_url)
+    try:
+        yield
+    finally:
+        logger.info("Shutting down EasyPanel MCP Server...")
+        await client.disconnect()
+        logger.info("Server shutdown complete")
+
+
+# Initialize FastMCP Server.
+# Note: current FastMCP takes `instructions` (not `title`/`description`) and the
+# lifespan context manager. host/port are settings used by the SSE transport.
 mcp = FastMCP(
     "easypanel-mcp",
-    title="EasyPanel MCP Server",
-    description="Exposes EasyPanel management tools to AI agents"
+    instructions="Exposes EasyPanel infrastructure management tools to AI agents.",
+    lifespan=lifespan,
+    host=config.server.host,
+    port=config.server.port,
 )
 
 # Register all modular tools
 register_all_tools(mcp, client)
-
-
-@mcp.on_startup()
-async def startup() -> None:
-    """Connect to EasyPanel API on server startup."""
-    logger.info("Starting EasyPanel MCP Server...")
-    await client.connect()
-    logger.info("Server started successfully and connected to EasyPanel")
-
-
-@mcp.on_shutdown()
-async def shutdown() -> None:
-    """Disconnect from EasyPanel API on server shutdown."""
-    logger.info("Shutting down EasyPanel MCP Server...")
-    await client.disconnect()
-    logger.info("Server shutdown complete")
 
 
 def main() -> None:
@@ -60,19 +69,15 @@ def main() -> None:
     # Determine transport mode (stdio or sse)
     # stdio is default for local execution (e.g. Claude Desktop)
     transport_arg = sys.argv[1] if len(sys.argv) > 1 else "stdio"
-    
+
     # Map "http" argument to "sse" (Server-Sent Events) supported by FastMCP
     transport = "sse" if transport_arg in ("http", "sse") else "stdio"
-    
-    logger.info(f"Running MCP server using '{transport}' transport")
-    
+
+    logger.info("Running MCP server using '%s' transport", transport)
+
     if transport == "sse":
-        logger.info(f"SSE Server listening on {config.server.host}:{config.server.port}")
-        mcp.run(
-            transport="sse",
-            host=config.server.host,
-            port=config.server.port
-        )
+        logger.info("SSE server listening on %s:%s", config.server.host, config.server.port)
+        mcp.run(transport="sse")
     else:
         mcp.run(transport="stdio")
 

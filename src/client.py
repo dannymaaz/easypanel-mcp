@@ -32,6 +32,10 @@ class EasyPanelClient:
         self._client: Optional[httpx.AsyncClient] = None
         self._token: Optional[str] = None
 
+        # Cache of service_id -> tRPC namespace (e.g. "services.postgres").
+        # Avoids re-fetching the full project tree on every service operation.
+        self._namespace_cache: dict[str, str] = {}
+
     async def connect(self) -> None:
         """Establish connection to EasyPanel API."""
         self._client = httpx.AsyncClient(
@@ -107,11 +111,15 @@ class EasyPanelClient:
         endpoint = f"/api/trpc/{procedure}"
         
         try:
-            # Query procedures (list, get, inspect, stats, info) use GET
-            # Mutation procedures (create, update, delete) use POST
-            query_procedures = ["list", "get", "inspect", "stats", "info", "check", "public"]
-            is_query = any(q in procedure.lower() for q in query_procedures)
-            
+            # Decide GET (query) vs POST (mutation) by the procedure's verb.
+            # tRPC reads (listX/getX/inspectX/checkX/searchX) are queries -> GET;
+            # writes (createX/updateX/destroyX/deployX/startX/stopX/restartX) -> POST.
+            # Matching the verb PREFIX of the last path segment avoids the false
+            # positives of substring matching (e.g. a mutation containing "get").
+            proc_name = procedure.rsplit(".", 1)[-1].lower()
+            query_prefixes = ("list", "get", "inspect", "check", "search")
+            is_query = proc_name.startswith(query_prefixes)
+
             if is_query or method == "GET":
                 # tRPC GET requests encode input as JSON string in query param
                 if input_data:
@@ -149,30 +157,43 @@ class EasyPanelClient:
 
     # ========== Helper: Dynamic Namespace Resolution ==========
     
+    # Valid EasyPanel service types with their own tRPC namespace.
+    _VALID_SERVICE_TYPES = ["app", "postgres", "redis", "mysql", "mongodb", "mariadb"]
+
     async def _resolve_service_namespace(self, service_id: str) -> str:
         """
-        Resolve the correct tRPC namespace for a service dynamically based on its type.
+        Resolve the correct tRPC namespace for a service based on its type.
         E.g., 'services.app', 'services.postgres', 'services.redis', etc.
+
+        Results are cached so we only fetch the full project tree once instead
+        of on every single service operation (get/update/delete/restart/...).
         """
+        if service_id in self._namespace_cache:
+            return self._namespace_cache[service_id]
+
         try:
             result = await self._trpc_request("projects.listProjectsAndServices")
             projects = result.get("data", []) if isinstance(result, dict) else result
-            
+
+            # Populate the cache for ALL services in this single round-trip.
             for proj in (projects if isinstance(projects, list) else []):
                 for service in proj.get("services", []):
-                    if service.get("id") == service_id:
-                        service_type = service.get("type", "app")
-                        
-                        # Valid EasyPanel service types with specific namespaces
-                        valid_types = ["app", "postgres", "redis", "mysql", "mongodb", "mariadb"]
-                        if service_type in valid_types:
-                            return f"services.{service_type}"
-                        
-                        # Fallback for templates and integrations (they are managed as standard apps)
-                        return "services.app"
+                    sid = service.get("id")
+                    if not sid:
+                        continue
+                    stype = service.get("type", "app")
+                    namespace = (
+                        f"services.{stype}"
+                        if stype in self._VALID_SERVICE_TYPES
+                        else "services.app"  # templates/integrations -> standard app
+                    )
+                    self._namespace_cache[sid] = namespace
+
+            if service_id in self._namespace_cache:
+                return self._namespace_cache[service_id]
         except Exception as e:
-            logger.warning(f"Failed to dynamically resolve namespace for service {service_id}: {e}")
-        
+            logger.warning(f"Failed to resolve namespace for service {service_id}: {e}")
+
         return "services.app"
 
     # ========== Project Management ==========
@@ -270,6 +291,8 @@ class EasyPanelClient:
                 **(config or {})
             }
             result = await self._trpc_request("services.app.createService", data)
+            # New service added -> drop the cache so it gets re-resolved.
+            self._namespace_cache.clear()
             return result if isinstance(result, dict) else {}
         except Exception as e:
             logger.error(f"Error creating service: {e}")
@@ -310,6 +333,8 @@ class EasyPanelClient:
         try:
             namespace = await self._resolve_service_namespace(service_id)
             result = await self._trpc_request(f"{namespace}.destroyService", {"id": service_id})
+            # Service removed -> forget its cached namespace.
+            self._namespace_cache.pop(service_id, None)
             return result if isinstance(result, dict) else {}
         except Exception as e:
             logger.error(f"Error deleting service: {e}")

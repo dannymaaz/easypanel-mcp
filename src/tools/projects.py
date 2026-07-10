@@ -7,6 +7,7 @@ Provides tools for managing EasyPanel projects using the FastMCP registration st
 import logging
 from typing import Any, Optional
 from mcp.server.fastmcp import FastMCP
+from mcp.types import ToolAnnotations
 from src.client import EasyPanelClient
 
 logger = logging.getLogger(__name__)
@@ -21,7 +22,10 @@ def register_tools(mcp: FastMCP, client: EasyPanelClient) -> None:
         client: EasyPanel API client
     """
     
-    @mcp.tool(name="list_projects")
+    @mcp.tool(
+        name="list_projects",
+        annotations=ToolAnnotations(readOnlyHint=True),
+    )
     async def list_projects() -> dict[str, Any]:
         """
         List all projects in EasyPanel.
@@ -33,7 +37,10 @@ def register_tools(mcp: FastMCP, client: EasyPanelClient) -> None:
             "message": f"Found {len(projects)} projects"
         }
     
-    @mcp.tool(name="get_project")
+    @mcp.tool(
+        name="get_project",
+        annotations=ToolAnnotations(readOnlyHint=True),
+    )
     async def get_project(project_id: str) -> dict[str, Any]:
         """
         Get detailed information about a specific project.
@@ -67,11 +74,15 @@ def register_tools(mcp: FastMCP, client: EasyPanelClient) -> None:
             "message": f"Project '{name}' created successfully"
         }
     
-    @mcp.tool(name="delete_project")
+    @mcp.tool(
+        name="delete_project",
+        annotations=ToolAnnotations(destructiveHint=True, idempotentHint=True),
+    )
     async def delete_project(project_id: str) -> dict[str, Any]:
         """
-        Delete a project from EasyPanel.
-        
+        Delete a project from EasyPanel, including all its services.
+        This is destructive and cannot be undone.
+
         Args:
             project_id: Project ID
         """

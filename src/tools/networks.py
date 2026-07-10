@@ -7,6 +7,7 @@ Provides tools for managing EasyPanel networks using the FastMCP registration st
 import logging
 from typing import Any
 from mcp.server.fastmcp import FastMCP
+from mcp.types import ToolAnnotations
 from src.client import EasyPanelClient
 
 logger = logging.getLogger(__name__)
@@ -21,10 +22,17 @@ def register_tools(mcp: FastMCP, client: EasyPanelClient) -> None:
         client: EasyPanel API client
     """
     
-    @mcp.tool(name="list_networks")
+    @mcp.tool(
+        name="list_networks",
+        annotations=ToolAnnotations(readOnlyHint=True),
+    )
     async def list_networks() -> dict[str, Any]:
         """
-        List all networks in EasyPanel.
+        Analyze network topology in EasyPanel.
+
+        Note: EasyPanel manages Docker networks automatically and does not expose
+        them via the tRPC API, so this infers a per-project topology (internal vs
+        public services) from the services' port configuration.
         """
         networks = await client.list_networks()
         return {
@@ -33,15 +41,23 @@ def register_tools(mcp: FastMCP, client: EasyPanelClient) -> None:
             "message": f"Found {len(networks)} networks"
         }
     
-    @mcp.tool(name="create_network")
+    @mcp.tool(
+        name="create_network",
+        annotations=ToolAnnotations(readOnlyHint=True),
+    )
     async def create_network(
         name: str,
         internal: bool = False,
         driver: str = "overlay"
     ) -> dict[str, Any]:
         """
-        Create a new network in EasyPanel. Use internal=true for isolated networks.
-        
+        Advisory helper for network creation.
+
+        IMPORTANT: EasyPanel creates and manages Docker networks automatically
+        when services are deployed; there is no API to create one directly. This
+        tool does NOT create anything — it returns guidance. To isolate services,
+        set internal=true when creating the service instead.
+
         Args:
             name: Network name
             internal: Whether the network is internal (isolated from internet)
@@ -59,11 +75,18 @@ def register_tools(mcp: FastMCP, client: EasyPanelClient) -> None:
             "message": f"Network '{name}' created as {network_type} network"
         }
     
-    @mcp.tool(name="delete_network")
+    @mcp.tool(
+        name="delete_network",
+        annotations=ToolAnnotations(readOnlyHint=True),
+    )
     async def delete_network(network_id: str) -> dict[str, Any]:
         """
-        Delete a network from EasyPanel.
-        
+        Advisory helper for network deletion.
+
+        IMPORTANT: EasyPanel removes a network automatically once all services in
+        it are deleted; there is no API to delete one directly. This tool does NOT
+        delete anything — it returns guidance.
+
         Args:
             network_id: Network ID
         """
