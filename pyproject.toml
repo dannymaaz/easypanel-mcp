@@ -62,7 +62,6 @@ Homepage = "https://github.com/dannymaaz/easypanel-mcp"
 Documentation = "https://dannymaaz.github.io/easypanel-mcp/"
 Repository = "https://github.com/dannymaaz/easypanel-mcp"
 Issues = "https://github.com/dannymaaz/easypanel-mcp/issues"
-Contact = "dannymaaz200@gmail.com"
 
 [project.scripts]
 easypanel-mcp = "src.server:main"
