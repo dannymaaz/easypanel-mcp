@@ -1,10 +1,13 @@
 # EasyPanel MCP Server
 
+[![Quality](https://github.com/dannymaaz/easypanel-mcp/actions/workflows/quality.yml/badge.svg)](https://github.com/dannymaaz/easypanel-mcp/actions/workflows/quality.yml)
 [![Python Version](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![MCP Protocol](https://img.shields.io/badge/MCP-Protocol-green?logo=anthropic&logoColor=white)](https://modelcontextprotocol.io/)
 [![EasyPanel Compatible](https://img.shields.io/badge/EasyPanel-Compatible-orange?logo=docker&logoColor=white)](https://easypanel.io/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](#)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](#instalación-y-configuración)
+
+[Documentación](https://dannymaaz.github.io/easypanel-mcp/) · [Inicio rápido](#instalación-y-configuración) · [Reportar un problema](https://github.com/dannymaaz/easypanel-mcp/issues)
 
 Servidor de **Model Context Protocol (MCP)** para **EasyPanel**. Este conector permite a clientes de inteligencia artificial y entornos de automatización gestionar infraestructura, desplegar servicios, configurar redes y monitorear recursos mediante la API tRPC de EasyPanel en lenguaje natural.
 
@@ -12,7 +15,7 @@ Servidor de **Model Context Protocol (MCP)** para **EasyPanel**. Este conector p
 
 ## Descripción General
 
-Este servidor implementa el estándar abierto **Model Context Protocol (MCP)** desarrollado por Anthropic para ofrecer herramientas de DevOps automatizadas. Permite a agentes de IA interactuar directamente con tu instancia de EasyPanel de forma local y segura, automatizando tareas complejas de administración de servidores, despliegues y diagnósticos.
+Este servidor implementa el estándar abierto **Model Context Protocol (MCP)** desarrollado por Anthropic para ofrecer herramientas de DevOps automatizadas. Permite a agentes de IA interactuar con una instancia de EasyPanel desde un cliente configurado, automatizando tareas complejas de administración de servidores, despliegues y diagnósticos.
 
 ### Características Principales
 
@@ -197,6 +200,15 @@ Una vez conectado, puedes interactuar directamente con tu agente haciéndole pet
 | | `auto_scale_service`| `service_id`, `cpu_threshold`, `memory_threshold` | Escala dinámicamente según la carga actual. |
 | **Seguridad** | `list_domains` | - | Lista los dominios asignados en la instancia. |
 | | `get_public_key` | - | Obtiene la clave SSH pública para despliegues Git. |
+
+---
+
+## Seguridad
+
+- Guarda `EASYPANEL_API_KEY` únicamente en variables de entorno o gestores de secretos; nunca la confirmes en Git.
+- Usa una cuenta o token con los permisos mínimos necesarios.
+- Revisa las acciones destructivas propuestas por el agente antes de ejecutarlas.
+- Para vulnerabilidades, consulta [SECURITY.md](SECURITY.md) y evita publicar credenciales en issues.
 
 ---
 
