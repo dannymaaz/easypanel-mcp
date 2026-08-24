@@ -20,7 +20,7 @@ if __package__ in (None, ""):
     if repository_root not in sys.path:
         sys.path.insert(0, repository_root)
 
-from mcp.server.fastmcp import FastMCP
+from mcp.server import MCPServer
 
 from config import config
 from src.client import EasyPanelClient
@@ -41,14 +41,8 @@ client = EasyPanelClient(config.easypanel)
 
 
 @asynccontextmanager
-async def lifespan(server: FastMCP) -> AsyncIterator[None]:
-    """
-    Manage the EasyPanel connection lifecycle.
-
-    FastMCP no longer exposes @on_startup/@on_shutdown decorators; the supported
-    way to run startup/shutdown logic is a lifespan async context manager passed
-    to the FastMCP constructor.
-    """
+async def lifespan(server: MCPServer) -> AsyncIterator[None]:
+    """Manage the EasyPanel connection lifecycle."""
     logger.info("Starting EasyPanel MCP Server...")
     await client.connect()
     logger.info("Connected to EasyPanel at %s", config.easypanel.base_url)
@@ -60,35 +54,57 @@ async def lifespan(server: FastMCP) -> AsyncIterator[None]:
         logger.info("Server shutdown complete")
 
 
-# Initialize FastMCP Server.
-# Note: current FastMCP takes `instructions` (not `title`/`description`) and the
-# lifespan context manager. host/port are settings used by the SSE transport.
-mcp = FastMCP(
+# MCP SDK v2 keeps server identity/lifecycle configuration in the constructor.
+# Transport-specific settings such as host and port are passed to run().
+mcp = MCPServer(
     "easypanel-mcp",
     instructions="Exposes EasyPanel infrastructure management tools to AI agents.",
     lifespan=lifespan,
-    host=config.server.host,
-    port=config.server.port,
 )
 
 # Register all modular tools
 register_all_tools(mcp, client)
 
 
+def resolve_transport(transport_arg: str) -> str:
+    """Normalize CLI transport aliases to MCP SDK v2 transport names."""
+    normalized = transport_arg.strip().lower()
+    if normalized in {"http", "streamable-http", "streamable_http"}:
+        return "streamable-http"
+    if normalized == "sse":
+        return "sse"
+    return "stdio"
+
+
 def main() -> None:
     """Main entry point."""
-    # Determine transport mode (stdio or sse)
-    # stdio is default for local execution (e.g. Claude Desktop)
+    # stdio is the default for local MCP clients. `http` now selects the modern
+    # Streamable HTTP transport; legacy SSE remains available explicitly.
     transport_arg = sys.argv[1] if len(sys.argv) > 1 else "stdio"
-
-    # Map "http" argument to "sse" (Server-Sent Events) supported by FastMCP
-    transport = "sse" if transport_arg in ("http", "sse") else "stdio"
+    transport = resolve_transport(transport_arg)
 
     logger.info("Running MCP server using '%s' transport", transport)
 
-    if transport == "sse":
+    if transport == "streamable-http":
+        logger.info(
+            "Streamable HTTP server listening on %s:%s/mcp",
+            config.server.host,
+            config.server.port,
+        )
+        mcp.run(
+            transport="streamable-http",
+            host=config.server.host,
+            port=config.server.port,
+            streamable_http_path="/mcp",
+            stateless_http=True,
+        )
+    elif transport == "sse":
         logger.info("SSE server listening on %s:%s", config.server.host, config.server.port)
-        mcp.run(transport="sse")
+        mcp.run(
+            transport="sse",
+            host=config.server.host,
+            port=config.server.port,
+        )
     else:
         mcp.run(transport="stdio")
 
