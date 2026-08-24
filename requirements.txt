@@ -8,7 +8,7 @@ aiohttp>=3.9.0
 # Type hints
 typing-extensions>=4.8.0
 
-# SDK Oficial de Model Context Protocol (MCP)
-# >=1.2 required for tool annotations (ToolAnnotations: readOnlyHint/destructiveHint/...)
-# MCP 2.x removes mcp.server.fastmcp; keep v1 until the server is migrated.
-mcp>=1.2.0,<2.0.0
+# Official Model Context Protocol (MCP) SDK
+# v2 is the current stable SDK line and provides MCPServer plus the
+# 2026-07-28 protocol while remaining compatible with earlier MCP clients.
+mcp>=2.0.0,<3.0.0
