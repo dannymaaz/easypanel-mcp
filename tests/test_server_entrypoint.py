@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 
-def _server_env():
+def _server_env() -> dict[str, str]:
     env = os.environ.copy()
     env.update(
         {
@@ -17,7 +17,7 @@ def _server_env():
     return env
 
 
-def test_server_script_resolves_project_imports_from_external_cwd(tmp_path):
+def test_server_script_resolves_project_imports_from_external_cwd(tmp_path: Path) -> None:
     """Direct execution must resolve repo-local imports outside the repo cwd."""
     repo_root = Path(__file__).resolve().parents[1]
     server_path = repo_root / "src" / "server.py"
@@ -39,7 +39,7 @@ def test_server_script_resolves_project_imports_from_external_cwd(tmp_path):
     assert result.returncode == 0, result.stderr
 
 
-def test_installed_server_imports_from_external_cwd(tmp_path):
+def test_installed_server_imports_from_external_cwd(tmp_path: Path) -> None:
     """The installed package must include both src and the root config module."""
     result = subprocess.run(
         [sys.executable, "-c", "import config; import src.server"],
