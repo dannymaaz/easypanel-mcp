@@ -6,11 +6,7 @@ import sys
 from pathlib import Path
 
 
-def test_server_script_resolves_project_imports_from_external_cwd(tmp_path):
-    """Direct execution must resolve repo-local imports outside the repo cwd."""
-    repo_root = Path(__file__).resolve().parents[1]
-    server_path = repo_root / "src" / "server.py"
-
+def _server_env():
     env = os.environ.copy()
     env.update(
         {
@@ -18,6 +14,13 @@ def test_server_script_resolves_project_imports_from_external_cwd(tmp_path):
             "EASYPANEL_API_KEY": "test_token",
         }
     )
+    return env
+
+
+def test_server_script_resolves_project_imports_from_external_cwd(tmp_path):
+    """Direct execution must resolve repo-local imports outside the repo cwd."""
+    repo_root = Path(__file__).resolve().parents[1]
+    server_path = repo_root / "src" / "server.py"
 
     code = (
         "import runpy; "
@@ -26,7 +29,22 @@ def test_server_script_resolves_project_imports_from_external_cwd(tmp_path):
     result = subprocess.run(
         [sys.executable, "-c", code],
         cwd=tmp_path,
-        env=env,
+        env=_server_env(),
+        capture_output=True,
+        text=True,
+        timeout=15,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
+
+
+def test_installed_server_imports_from_external_cwd(tmp_path):
+    """The installed package must include both src and the root config module."""
+    result = subprocess.run(
+        [sys.executable, "-c", "import config; import src.server"],
+        cwd=tmp_path,
+        env=_server_env(),
         capture_output=True,
         text=True,
         timeout=15,
