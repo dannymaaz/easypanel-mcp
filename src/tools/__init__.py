@@ -1,24 +1,25 @@
 """
 Tools module for EasyPanel MCP Server.
 
-Provides modular tools for managing EasyPanel resources using FastMCP.
+Provides modular tools for managing EasyPanel resources using MCPServer.
 """
 
-from src.tools.services import register_tools as register_services_tools
+from mcp.server import MCPServer
+
+from src.client import EasyPanelClient
 from src.tools.deployments import register_tools as register_deployments_tools
 from src.tools.networks import register_tools as register_networks_tools
 from src.tools.projects import register_tools as register_projects_tools
+from src.tools.services import register_tools as register_services_tools
 from src.tools.system import register_tools as register_system_tools
-from mcp.server.fastmcp import FastMCP
-from src.client import EasyPanelClient
 
 
-def register_all_tools(mcp: FastMCP, client: EasyPanelClient) -> None:
+def register_all_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
     """
-    Register all modular tools in the FastMCP instance.
+    Register all modular tools in the MCPServer instance.
 
     Args:
-        mcp: FastMCP server instance
+        mcp: MCPServer instance
         client: EasyPanel API client
     """
     register_services_tools(mcp, client)
