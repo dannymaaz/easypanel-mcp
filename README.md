@@ -34,21 +34,23 @@ cd easypanel-mcp
 ```
 
 ### 2. Configurar el entorno virtual e instalar
-Recomendamos usar un entorno virtual para aislar las dependencias:
+Recomendamos usar un entorno virtual para aislar las dependencias e instalar el proyecto en modo editable. Esto utiliza `pyproject.toml`, instala las dependencias compatibles y registra el comando `easypanel-mcp`.
 
 **En Windows (PowerShell):**
 ```powershell
 python -m venv venv
 .\venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+python -m pip install -e .
 ```
 
 **En macOS / Linux:**
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt
+python -m pip install -e .
 ```
+
+`requirements.txt` se mantiene disponible para instalaciones tradicionales, pero la instalación mediante `pyproject.toml` es la recomendada para desarrollo y para clientes MCP locales.
 
 ### 3. Configurar variables de entorno
 Crea un archivo `.env` en la raíz del proyecto basándote en el ejemplo provisto:
@@ -73,6 +75,15 @@ MCP_HOST=127.0.0.1
 MCP_PORT=8080
 MCP_LOG_LEVEL=INFO
 ```
+
+### 4. Verificar el arranque
+Con el entorno virtual activo puedes iniciar el servidor mediante el entrypoint instalado:
+
+```bash
+easypanel-mcp
+```
+
+También se mantiene soportada la ejecución directa por ruta absoluta a `src/server.py`. El servidor resuelve sus imports relativos al repositorio, por lo que los clientes MCP no necesitan configurar `PYTHONPATH` ni arrancar desde la raíz del proyecto.
 
 ---
 
@@ -133,10 +144,12 @@ Añade el servidor al archivo de configuración de Claude Desktop (`claude_deskt
 ```
 
 ### 4. n8n (Integración remota vía SSE)
-Si deseas desplegarlo de forma dedicada como servicio remoto, inicia el servidor en modo HTTP:
+Si deseas desplegarlo de forma dedicada como servicio remoto, inicia el servidor en modo HTTP con el entrypoint instalado:
 ```bash
-python src/server.py http
+easypanel-mcp http
 ```
+
+También puedes utilizar `python src/server.py http` desde el repositorio.
 
 Esto levantará el servidor en `http://127.0.0.1:8080` utilizando Server-Sent Events (SSE). Puedes integrarlo en nodos HTTP de n8n o sistemas externos realizando peticiones estructuradas al endpoint de herramientas:
 
