@@ -1,9 +1,9 @@
 """Regression tests for launching the MCP server entrypoint."""
 
 import os
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 
 
 def test_server_script_resolves_project_imports_from_external_cwd(tmp_path):
