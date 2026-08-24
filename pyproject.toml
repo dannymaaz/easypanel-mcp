@@ -92,6 +92,10 @@ ignore = ["E501"]
 [tool.ruff.lint.isort]
 known-first-party = ["src", "config"]
 
+[tool.ruff.lint.per-file-ignores]
+# Legacy client cleanup is intentionally tracked separately from the v2 release.
+"src/client.py" = ["I001", "W293", "E722", "B904"]
+
 [tool.mypy]
 python_version = "3.10"
 strict = true
