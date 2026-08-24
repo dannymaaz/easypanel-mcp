@@ -1,27 +1,29 @@
 """
 Networks Tool Module.
 
-Provides tools for managing EasyPanel networks using the FastMCP registration style.
+Provides tools for managing EasyPanel networks using MCPServer.
 """
 
 import logging
 from typing import Any
-from mcp.server.fastmcp import FastMCP
+
+from mcp.server import MCPServer
 from mcp.types import ToolAnnotations
+
 from src.client import EasyPanelClient
 
 logger = logging.getLogger(__name__)
 
 
-def register_tools(mcp: FastMCP, client: EasyPanelClient) -> None:
+def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
     """
-    Register networks tools on the FastMCP instance.
-    
+    Register networks tools on the MCPServer instance.
+
     Args:
-        mcp: FastMCP server instance
+        mcp: MCPServer instance
         client: EasyPanel API client
     """
-    
+
     @mcp.tool(
         name="list_networks",
         annotations=ToolAnnotations(readOnlyHint=True),
@@ -40,7 +42,7 @@ def register_tools(mcp: FastMCP, client: EasyPanelClient) -> None:
             "data": networks,
             "message": f"Found {len(networks)} networks"
         }
-    
+
     @mcp.tool(
         name="create_network",
         annotations=ToolAnnotations(readOnlyHint=True),
@@ -74,7 +76,7 @@ def register_tools(mcp: FastMCP, client: EasyPanelClient) -> None:
             "data": network,
             "message": f"Network '{name}' created as {network_type} network"
         }
-    
+
     @mcp.tool(
         name="delete_network",
         annotations=ToolAnnotations(readOnlyHint=True),

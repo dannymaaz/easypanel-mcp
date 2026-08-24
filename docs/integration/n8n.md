@@ -1,416 +1,176 @@
 ---
 title: n8n Integration - EasyPanel MCP
-description: Integrate EasyPanel MCP with n8n workflows for automated infrastructure management and deployment pipelines.
-keywords: n8n EasyPanel, workflow automation, deployment automation, CI/CD, infrastructure orchestration
+description: Integrate EasyPanel MCP with n8n using its native MCP Client nodes for infrastructure automation and AI agent tools.
+keywords: n8n EasyPanel, MCP Client, Streamable HTTP, workflow automation, deployment automation, infrastructure orchestration
 ---
 
 # ⚡ n8n Integration
 
-Automate infrastructure management with n8n workflows and EasyPanel MCP.
+Connect n8n directly to EasyPanel MCP using n8n's native MCP client nodes.
 
 ---
 
 ## Overview
 
-Integrate EasyPanel MCP with n8n to create automated workflows for:
-- Auto-deployment on Git push
-- Scheduled scaling
-- Monitoring and alerting
-- Multi-step deployment pipelines
+EasyPanel MCP can expose its tools remotely through **Streamable HTTP**, the recommended HTTP transport in MCP SDK v2.
+
+Use:
+
+- **MCP Client** when you want to call an EasyPanel MCP tool as a regular workflow step.
+- **MCP Client Tool** when you want to expose EasyPanel MCP tools to an n8n AI Agent.
+
+This avoids manually constructing MCP JSON-RPC requests in an HTTP Request node. The MCP client handles protocol negotiation, tool discovery, schemas, and tool calls for you.
 
 ---
 
 ## 📋 Prerequisites
 
-- **n8n** instance (self-hosted or cloud)
-- **EasyPanel MCP** running in HTTP mode
-- **EasyPanel API Key**
+- An n8n instance with MCP Client support.
+- EasyPanel MCP installed and configured.
+- A valid `EASYPANEL_URL` and `EASYPANEL_API_KEY` on the EasyPanel MCP server.
+- Network access from n8n to the EasyPanel MCP endpoint.
 
 ---
 
-## 🔧 Setup Steps
+## 🔧 Start EasyPanel MCP in HTTP mode
 
-### Step 1: Start MCP in HTTP Mode
+Using the installed entrypoint:
+
+```bash
+easypanel-mcp http
+```
+
+Or directly from the repository:
 
 ```bash
 python src/server.py http
 ```
 
-Server will start on `http://127.0.0.1:8080`
+By default, the MCP endpoint is:
 
----
-
-### Step 2: Create n8n HTTP Request Node
-
-Add an **HTTP Request** node to your workflow:
-
-**Basic Configuration:**
-```json
-{
-  "method": "POST",
-  "url": "http://localhost:8080/mcp",
-  "sendBody": true,
-  "bodyParameters": {
-    "parameters": [
-      {
-        "name": "method",
-        "value": "tools/call"
-      },
-      {
-        "name": "params.name",
-        "value": "list_services"
-      }
-    ]
-  }
-}
+```text
+http://127.0.0.1:8080/mcp
 ```
 
+When n8n runs on another machine or container, replace `127.0.0.1` with a hostname or address that n8n can actually reach. In production, expose the endpoint through HTTPS and an appropriate reverse proxy.
+
 ---
 
-## 🎯 Example Workflows
+## 🧩 Option 1: MCP Client node
 
-### Workflow 1: Auto-Deploy on Git Push
+Use the **MCP Client** node when an EasyPanel action should be a normal step in a workflow.
 
-Trigger deployment when code is pushed to GitHub.
+Configure:
 
-**Workflow JSON:**
-```json
-{
-  "nodes": [
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "webhook/deploy",
-        "responseMode": "lastNode"
-      },
-      "name": "Webhook",
-      "type": "n8n-nodes-base.webhook"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "http://localhost:8080/mcp",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "{\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"create_deployment\",\n    \"arguments\": {\n      \"project_id\": \"{{ $json.body.project_id }}\",\n      \"service_id\": \"{{ $json.body.service_id }}\",\n      \"image\": \"{{ $json.body.image }}\"\n    }\n  }\n}"
-      },
-      "name": "EasyPanel Deploy",
-      "type": "n8n-nodes-base.httpRequest"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "={{ $json.body.webhook_url }}",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "{\n  \"text\": \"✅ Deployment completed: {{ $json.result.content[0].text }}\"\n}"
-      },
-      "name": "Notify Slack",
-      "type": "n8n-nodes-base.httpRequest"
-    }
-  ],
-  "connections": {
-    "Webhook": {
-      "main": [
-        [
-          {
-            "node": "EasyPanel Deploy",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "EasyPanel Deploy": {
-      "main": [
-        [
-          {
-            "node": "Notify Slack",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    }
-  }
-}
+| Setting | Value |
+| --- | --- |
+| Server Transport | Streamable HTTP |
+| MCP Endpoint URL | `https://your-mcp-host.example.com/mcp` |
+| Authentication | According to your reverse proxy / deployment |
+| Tool | Select one of the tools discovered from EasyPanel MCP |
+
+n8n automatically fetches the available tools from the MCP server. For nested tool arguments, use the node's JSON input mode when appropriate.
+
+Typical workflow examples:
+
+```text
+GitHub Trigger
+    ↓
+MCP Client: deploy_service
+    ↓
+Slack / Email notification
+```
+
+```text
+Schedule Trigger
+    ↓
+MCP Client: get_system_stats
+    ↓
+IF / Code
+    ↓
+MCP Client: scale_service
+```
+
+```text
+Error / Monitoring Trigger
+    ↓
+MCP Client: get_service
+    ↓
+MCP Client: restart_service
 ```
 
 ---
 
-### Workflow 2: Scheduled Scaling
+## 🤖 Option 2: MCP Client Tool for AI Agents
 
-Scale services based on schedule.
+Use **MCP Client Tool** when an n8n AI Agent should decide which EasyPanel tool to call.
 
-**Workflow:**
-```json
-{
-  "nodes": [
-    {
-      "parameters": {
-        "rule": {
-          "interval": [
-            {
-              "field": "hours",
-              "hoursInterval": 1
-            }
-          ]
-        }
-      },
-      "name": "Schedule Trigger",
-      "type": "n8n-nodes-base.scheduleTrigger"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "http://localhost:8080/mcp",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "{\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"list_services\"\n  }\n}"
-      },
-      "name": "Get Services",
-      "type": "n8n-nodes-base.httpRequest"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "string": [
-            {
-              "value1": "{{ $json.name }}",
-              "value2": "worker",
-              "operation": "equals"
-            }
-          ]
-        }
-      },
-      "name": "Filter Worker",
-      "type": "n8n-nodes-base.if"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "http://localhost:8080/mcp",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "{\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"update_service\",\n    \"arguments\": {\n      \"service_id\": \"{{ $json.id }}\",\n      \"config\": {\n        \"replicas\": 5\n      }\n    }\n  }\n}"
-      },
-      "name": "Scale Up",
-      "type": "n8n-nodes-base.httpRequest"
-    }
-  ]
-}
-```
+1. Add an **AI Agent** node.
+2. Attach an **MCP Client Tool** to the agent's Tools input.
+3. Select **Streamable HTTP** as the server transport.
+4. Set the MCP endpoint to your EasyPanel MCP `/mcp` URL.
+5. Limit the exposed tools when the agent only needs a subset.
+
+For infrastructure automation, prefer exposing only the tools required by that workflow. Keep destructive actions such as service or project deletion out of general-purpose agents unless the workflow includes suitable approval controls.
 
 ---
 
-### Workflow 3: Health Check & Auto-Recovery
+## 🔁 Legacy SSE compatibility
 
-Monitor services and auto-recover failed ones.
+Current n8n MCP Client versions support selecting the server transport. Older MCP Client Tool versions may only expose an **SSE Endpoint** field.
 
-**Workflow:**
-```json
-{
-  "nodes": [
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "http://localhost:8080/mcp",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "{\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"list_services\"\n  }\n}"
-      },
-      "name": "List Services",
-      "type": "n8n-nodes-base.httpRequest"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "string": [
-            {
-              "value1": "{{ $json.status }}",
-              "value2": "crashed",
-              "operation": "equals"
-            }
-          ]
-        }
-      },
-      "name": "Check Status",
-      "type": "n8n-nodes-base.if"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "http://localhost:8080/mcp",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "{\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"restart_service\",\n    \"arguments\": {\n      \"service_id\": \"{{ $json.id }}\"\n    }\n  }\n}"
-      },
-      "name": "Restart Service",
-      "type": "n8n-nodes-base.httpRequest"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "{\n  \"text\": \"🚨 Service {{ $json.name }} crashed and was automatically restarted\"\n}"
-      },
-      "name": "Alert Slack",
-      "type": "n8n-nodes-base.httpRequest"
-    }
-  ]
-}
+For those integrations, EasyPanel MCP keeps an explicit SSE mode:
+
+```bash
+easypanel-mcp sse
 ```
+
+Prefer Streamable HTTP for new deployments.
 
 ---
 
-## 🔧 HTTP Request Node Template
+## 🔐 Security recommendations
 
-Use this template for any EasyPanel MCP tool:
-
-```json
-{
-  "method": "POST",
-  "url": "http://localhost:8080/mcp",
-  "sendBody": true,
-  "specifyBody": "json",
-  "jsonBody": "{\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"TOOL_NAME\",\n    \"arguments\": {\n      \"PARAM_NAME\": \"PARAM_VALUE\"\n    }\n  }\n}"
-}
-```
-
-Replace:
-- `TOOL_NAME` with the tool name (e.g., `create_service`)
-- `PARAM_NAME` and `PARAM_VALUE` with actual parameters
-
----
-
-## 📊 Common Tools in n8n
-
-### List Services
-
-```json
-{
-  "method": "tools/call",
-  "params": {
-    "name": "list_services",
-    "arguments": {}
-  }
-}
-```
-
-### Create Service
-
-```json
-{
-  "method": "tools/call",
-  "params": {
-    "name": "create_service",
-    "arguments": {
-      "name": "my-service",
-      "project_id": "proj_123",
-      "image": "nginx:latest"
-    }
-  }
-}
-```
-
-### Get Logs
-
-```json
-{
-  "method": "tools/call",
-  "params": {
-    "name": "get_service_logs",
-    "arguments": {
-      "service_id": "svc_abc",
-      "lines": 100
-    }
-  }
-}
-```
-
----
-
-## 🔗 Integration Examples
-
-### GitHub + n8n + EasyPanel
-
-```
-GitHub Webhook
-     ↓
-n8n Workflow
-     ↓
-EasyPanel MCP
-     ↓
-Deploy Service
-```
-
-### Monitoring + n8n + EasyPanel
-
-```
-Prometheus Alert
-     ↓
-n8n Workflow
-     ↓
-EasyPanel MCP
-     ↓
-Scale Service
-```
-
-### Schedule + n8n + EasyPanel
-
-```
-Cron Schedule
-     ↓
-n8n Workflow
-     ↓
-EasyPanel MCP
-     ↓
-Backup Database
-```
+- Do not send `EASYPANEL_API_KEY` from n8n to the MCP endpoint. The key belongs on the EasyPanel MCP server itself.
+- Put remote MCP deployments behind HTTPS.
+- Use network restrictions and/or reverse-proxy authentication when the endpoint is reachable outside a trusted network.
+- Expose the minimum set of MCP tools needed by an AI Agent.
+- Add human approval around destructive infrastructure operations where appropriate.
 
 ---
 
 ## 🆘 Troubleshooting
 
-### Connection Refused
+### Connection refused
 
-!!! error "ECONNREFUSED"
+1. Confirm EasyPanel MCP is running with `easypanel-mcp http`.
+2. Confirm n8n can reach the configured host and port.
+3. Do not use `127.0.0.1` if n8n and EasyPanel MCP are in different containers or machines.
+4. Check firewall and reverse-proxy rules.
 
-    **Solutions:**
-    1. Ensure MCP is running in HTTP mode
-    2. Check correct port (default: 8080)
-    3. Verify firewall allows connection
+### Tools do not appear
 
-### Timeout
+1. Verify the endpoint ends in `/mcp` for Streamable HTTP.
+2. Confirm the MCP Client node is using the correct server transport.
+3. Check the EasyPanel MCP logs for protocol or connection errors.
+4. Confirm the server starts successfully with valid EasyPanel credentials.
 
-!!! error "Request timeout"
+### Authentication to EasyPanel fails
 
-    **Solutions:**
-    1. Increase timeout in n8n HTTP node
-    2. Check EasyPanel is responsive
-    3. Increase `EASYPANEL_TIMEOUT` in MCP config
-
-### Invalid Response
-
-!!! error "Unexpected response format"
-
-    **Solutions:**
-    1. Verify JSON body format
-    2. Check tool name is correct
-    3. Ensure all required parameters provided
+1. Verify `EASYPANEL_URL` on the MCP server.
+2. Verify `EASYPANEL_API_KEY` or `email:password` credentials.
+3. Check whether the EasyPanel credential has expired or lost permissions.
 
 ---
 
 ## 📚 Related Documentation
 
-- **[Claude Desktop](claude-desktop.md)** - AI assistant integration
+- **[Claude Desktop](claude-desktop.md)** - Local MCP client integration
 - **[GitHub Actions](github-actions.md)** - CI/CD pipelines
-- **[Tools Reference](../tools/overview.md)** - All available tools
+- **[Tools Reference](../tools/overview.md)** - Available EasyPanel MCP tools
 
 ---
 
 <p align="center" markdown>
-**⚡ n8n connected!** Build your first automation workflow.
+**⚡ n8n + EasyPanel MCP:** native MCP transport, no hand-written protocol requests.
 </p>

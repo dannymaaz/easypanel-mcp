@@ -52,3 +52,25 @@ def test_installed_server_imports_from_external_cwd(tmp_path: Path) -> None:
     )
 
     assert result.returncode == 0, result.stderr
+
+
+def test_mcp_v2_transport_aliases(tmp_path: Path) -> None:
+    """HTTP selects Streamable HTTP while explicit SSE remains available."""
+    code = (
+        "from src.server import resolve_transport; "
+        "assert resolve_transport('http') == 'streamable-http'; "
+        "assert resolve_transport('streamable-http') == 'streamable-http'; "
+        "assert resolve_transport('sse') == 'sse'; "
+        "assert resolve_transport('stdio') == 'stdio'"
+    )
+    result = subprocess.run(
+        [sys.executable, "-c", code],
+        cwd=tmp_path,
+        env=_server_env(),
+        capture_output=True,
+        text=True,
+        timeout=15,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr

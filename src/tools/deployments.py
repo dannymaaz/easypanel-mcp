@@ -1,31 +1,33 @@
 """
 Deployments Tool Module.
 
-Provides tools for managing EasyPanel deployments using the FastMCP registration style.
+Provides tools for managing EasyPanel deployments using MCPServer.
 """
 
 import logging
 from typing import Any, Optional
-from mcp.server.fastmcp import FastMCP
+
+from mcp.server import MCPServer
+
 from src.client import EasyPanelClient
 
 logger = logging.getLogger(__name__)
 
 
-def register_tools(mcp: FastMCP, client: EasyPanelClient) -> None:
+def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
     """
-    Register deployments tools on the FastMCP instance.
-    
+    Register deployments tools on the MCPServer instance.
+
     Args:
-        mcp: FastMCP server instance
+        mcp: MCPServer instance
         client: EasyPanel API client
     """
-    
+
     @mcp.tool(name="list_deployments")
     async def list_deployments(project_id: Optional[str] = None) -> dict[str, Any]:
         """
         List all deployments in EasyPanel, optionally filtered by project.
-        
+
         Args:
             project_id: Optional project ID to filter deployments
         """
@@ -35,12 +37,12 @@ def register_tools(mcp: FastMCP, client: EasyPanelClient) -> None:
             "data": deployments,
             "message": f"Found {len(deployments)} deployments"
         }
-    
+
     @mcp.tool(name="get_deployment")
     async def get_deployment(deployment_id: str) -> dict[str, Any]:
         """
         Get detailed information about a specific deployment.
-        
+
         Args:
             deployment_id: Deployment ID
         """
@@ -50,7 +52,7 @@ def register_tools(mcp: FastMCP, client: EasyPanelClient) -> None:
             "data": deployment,
             "message": f"Deployment {deployment_id} retrieved"
         }
-    
+
     @mcp.tool(name="create_deployment")
     async def create_deployment(
         project_id: str,
@@ -60,7 +62,7 @@ def register_tools(mcp: FastMCP, client: EasyPanelClient) -> None:
     ) -> dict[str, Any]:
         """
         Create a new deployment in EasyPanel.
-        
+
         Args:
             project_id: Project ID
             service_id: Service ID
@@ -78,12 +80,12 @@ def register_tools(mcp: FastMCP, client: EasyPanelClient) -> None:
             "data": deployment,
             "message": f"Deployment created successfully for service {service_id}"
         }
-    
+
     @mcp.tool(name="get_deployment_logs")
     async def get_deployment_logs(deployment_id: str) -> dict[str, Any]:
         """
         Get logs from a deployment.
-        
+
         Args:
             deployment_id: Deployment ID
         """

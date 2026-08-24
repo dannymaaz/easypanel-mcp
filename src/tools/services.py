@@ -1,24 +1,26 @@
 """
 Services Tool Module.
 
-Provides tools for managing EasyPanel services using the FastMCP registration style.
+Provides tools for managing EasyPanel services using MCPServer.
 """
 
 import logging
 from typing import Any, Optional
-from mcp.server.fastmcp import FastMCP
+
+from mcp.server import MCPServer
 from mcp.types import ToolAnnotations
+
 from src.client import EasyPanelClient
 
 logger = logging.getLogger(__name__)
 
 
-def register_tools(mcp: FastMCP, client: EasyPanelClient) -> None:
+def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
     """
-    Register services tools on the FastMCP instance.
+    Register services tools on the MCPServer instance.
 
     Args:
-        mcp: FastMCP server instance
+        mcp: MCPServer instance
         client: EasyPanel API client
     """
 

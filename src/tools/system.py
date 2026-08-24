@@ -7,19 +7,21 @@ EasyPanelClient but were not previously surfaced as MCP tools.
 
 import logging
 from typing import Any, Optional
-from mcp.server.fastmcp import FastMCP
+
+from mcp.server import MCPServer
 from mcp.types import ToolAnnotations
+
 from src.client import EasyPanelClient
 
 logger = logging.getLogger(__name__)
 
 
-def register_tools(mcp: FastMCP, client: EasyPanelClient) -> None:
+def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
     """
-    Register system / monitoring / domain tools on the FastMCP instance.
+    Register system / monitoring / domain tools on the MCPServer instance.
 
     Args:
-        mcp: FastMCP server instance
+        mcp: MCPServer instance
         client: EasyPanel API client
     """
 
