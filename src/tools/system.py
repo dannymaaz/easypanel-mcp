@@ -27,7 +27,7 @@ def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
 
     @mcp.tool(
         name="get_system_stats",
-        annotations=ToolAnnotations(readOnlyHint=True),
+        annotations=ToolAnnotations(read_only_hint=True),
     )
     async def get_system_stats() -> dict[str, Any]:
         """Get host system statistics (CPU, memory, disk, uptime)."""
@@ -40,7 +40,7 @@ def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
 
     @mcp.tool(
         name="get_service_stats",
-        annotations=ToolAnnotations(readOnlyHint=True),
+        annotations=ToolAnnotations(read_only_hint=True),
     )
     async def get_service_stats() -> dict[str, Any]:
         """Get per-service runtime statistics."""
@@ -53,7 +53,7 @@ def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
 
     @mcp.tool(
         name="health_check",
-        annotations=ToolAnnotations(readOnlyHint=True),
+        annotations=ToolAnnotations(read_only_hint=True),
     )
     async def health_check() -> dict[str, Any]:
         """Check whether the EasyPanel API is reachable and the session is valid."""
@@ -66,7 +66,7 @@ def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
 
     @mcp.tool(
         name="get_server_ip",
-        annotations=ToolAnnotations(readOnlyHint=True),
+        annotations=ToolAnnotations(read_only_hint=True),
     )
     async def get_server_ip() -> dict[str, Any]:
         """Get the server's public IP address."""
@@ -79,7 +79,7 @@ def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
 
     @mcp.tool(
         name="list_domains",
-        annotations=ToolAnnotations(readOnlyHint=True),
+        annotations=ToolAnnotations(read_only_hint=True),
     )
     async def list_domains(service_id: Optional[str] = None) -> dict[str, Any]:
         """
