@@ -10,4 +10,5 @@ typing-extensions>=4.8.0
 
 # SDK Oficial de Model Context Protocol (MCP)
 # >=1.2 required for tool annotations (ToolAnnotations: readOnlyHint/destructiveHint/...)
-mcp>=1.2.0
+# MCP 2.x removes mcp.server.fastmcp; keep v1 until the server is migrated.
+mcp>=1.2.0,<2.0.0
