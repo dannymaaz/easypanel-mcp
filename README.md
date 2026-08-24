@@ -15,7 +15,7 @@ Servidor de **Model Context Protocol (MCP)** para **EasyPanel**. Este conector p
 
 ## Descripción General
 
-Este servidor implementa el estándar abierto **Model Context Protocol (MCP)** desarrollado por Anthropic para ofrecer herramientas de DevOps automatizadas. Permite a agentes de IA interactuar con una instancia de EasyPanel desde un cliente configurado, automatizando tareas complejas de administración de servidores, despliegues y diagnósticos.
+Este servidor implementa el estándar abierto **Model Context Protocol (MCP)** y utiliza la línea estable v2 del SDK oficial de Python. Permite a agentes de IA interactuar con una instancia de EasyPanel desde un cliente configurado, automatizando tareas complejas de administración de servidores, despliegues y diagnósticos.
 
 ### Características Principales
 
@@ -24,7 +24,7 @@ Este servidor implementa el estándar abierto **Model Context Protocol (MCP)** d
 *   **Auto-Scaling Automatizado:** Escalado vertical de CPU y memoria basado en métricas y límites definidos.
 *   **Análisis y Debugging:** Recuperación de logs estructurados e información de despliegue para auditoría y diagnóstico de fallos en tiempo real.
 *   **Descubrimiento de Redes:** Análisis automático de topologías de comunicación interna y pública de Docker.
-*   **Soporte Multicliente:** Diseñado tanto para transporte local de flujo estándar (`stdio`) como para conexión remota vía Server-Sent Events (`sse`/`http`).
+*   **Soporte Multicliente:** Transporte local `stdio`, transporte remoto moderno **Streamable HTTP** y compatibilidad explícita con **SSE**.
 
 ---
 
@@ -146,29 +146,32 @@ Añade el servidor al archivo de configuración de Claude Desktop (`claude_deskt
 }
 ```
 
-### 4. n8n (Integración remota vía SSE)
-Si deseas desplegarlo de forma dedicada como servicio remoto, inicia el servidor en modo HTTP con el entrypoint instalado:
+### 4. n8n y clientes remotos (Streamable HTTP)
+Para desplegar el servidor como servicio MCP remoto, inicia el transporte **Streamable HTTP**:
+
 ```bash
 easypanel-mcp http
 ```
 
-También puedes utilizar `python src/server.py http` desde el repositorio.
+También puedes utilizar:
 
-Esto levantará el servidor en `http://127.0.0.1:8080` utilizando Server-Sent Events (SSE). Puedes integrarlo en nodos HTTP de n8n o sistemas externos realizando peticiones estructuradas al endpoint de herramientas:
+```bash
+python src/server.py http
+```
 
-*   **Endpoint:** `http://localhost:8080/mcp`
-*   **Formato de petición:**
-    ```json
-    {
-      "method": "tools/call",
-      "params": {
-        "name": "list_services",
-        "arguments": {
-          "project_id": "mi-proyecto"
-        }
-      }
-    }
-    ```
+El endpoint MCP queda disponible en:
+
+```text
+http://127.0.0.1:8080/mcp
+```
+
+Configura ese endpoint en un cliente compatible con MCP, por ejemplo un nodo MCP Client/MCP Client Tool de n8n. El cliente MCP se encarga de la negociación del protocolo, descubrimiento de tools y llamadas JSON-RPC.
+
+Si necesitas mantener una integración antigua basada en Server-Sent Events, SSE continúa disponible de forma explícita:
+
+```bash
+easypanel-mcp sse
+```
 
 ---
 
