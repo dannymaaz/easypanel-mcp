@@ -4,15 +4,22 @@ Basic tests for EasyPanel MCP Server.
 Tests cover configuration, client, and tools functionality using MCPServer.
 """
 
-import json
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from mcp.server import MCPServer
+from mcp.types import CallToolResult
 
 from config import Config, EasyPanelConfig, ServerConfig
 from src.client import EasyPanelClient
 from src.tools import register_all_tools
+
+
+def _tool_result_data(result: CallToolResult) -> dict:
+    """Return the structured payload from a successful MCP v2 tool call."""
+    assert result.is_error is False
+    assert isinstance(result.structured_content, dict)
+    return result.structured_content
 
 
 class TestConfig:
@@ -132,9 +139,8 @@ class TestMCPServerIntegration:
     @pytest.mark.asyncio
     async def test_list_services(self, mcp_server):
         """Test listing services tool via MCPServer."""
-        results = await mcp_server.call_tool("list_services", {})
-        # results is (content_list, return_dict)
-        res_data = results[1]
+        result = await mcp_server.call_tool("list_services", {})
+        res_data = _tool_result_data(result)
         assert res_data["success"] is True
         assert len(res_data["data"]) == 1
         assert res_data["data"][0]["name"] == "test-service"
@@ -142,45 +148,45 @@ class TestMCPServerIntegration:
     @pytest.mark.asyncio
     async def test_get_service(self, mcp_server):
         """Test getting service details tool via MCPServer."""
-        results = await mcp_server.call_tool("get_service", {"service_id": "svc_1"})
-        res_data = results[1]
+        result = await mcp_server.call_tool("get_service", {"service_id": "svc_1"})
+        res_data = _tool_result_data(result)
         assert res_data["success"] is True
         assert res_data["data"]["id"] == "svc_1"
 
     @pytest.mark.asyncio
     async def test_create_service(self, mcp_server):
         """Test creating service tool via MCPServer."""
-        results = await mcp_server.call_tool("create_service", {
+        result = await mcp_server.call_tool("create_service", {
             "name": "new-service",
             "project_id": "proj_1",
             "image": "nginx:latest"
         })
-        res_data = results[1]
+        res_data = _tool_result_data(result)
         assert res_data["success"] is True
 
     @pytest.mark.asyncio
     async def test_list_deployments(self, mcp_server):
         """Test listing deployments tool via MCPServer."""
-        results = await mcp_server.call_tool("list_deployments", {})
-        res_data = results[1]
+        result = await mcp_server.call_tool("list_deployments", {})
+        res_data = _tool_result_data(result)
         assert res_data["success"] is True
 
     @pytest.mark.asyncio
     async def test_create_network(self, mcp_server):
         """Test creating network tool via MCPServer."""
-        results = await mcp_server.call_tool("create_network", {
+        result = await mcp_server.call_tool("create_network", {
             "name": "internal-net",
             "internal": True
         })
-        res_data = results[1]
+        res_data = _tool_result_data(result)
         assert res_data["success"] is True
         assert "internal" in res_data["message"]
 
     @pytest.mark.asyncio
     async def test_list_projects(self, mcp_server):
         """Test listing projects tool via MCPServer."""
-        results = await mcp_server.call_tool("list_projects", {})
-        res_data = results[1]
+        result = await mcp_server.call_tool("list_projects", {})
+        res_data = _tool_result_data(result)
         assert res_data["success"] is True
 
     # ----- Newly exposed tools -----
@@ -199,45 +205,47 @@ class TestMCPServerIntegration:
     @pytest.mark.asyncio
     async def test_stop_service(self, mcp_server, mock_client):
         """stop_service tool should call the client and succeed."""
-        results = await mcp_server.call_tool("stop_service", {"service_id": "svc_1"})
-        assert results[1]["success"] is True
+        result = await mcp_server.call_tool("stop_service", {"service_id": "svc_1"})
+        assert _tool_result_data(result)["success"] is True
         mock_client.stop_service.assert_awaited_once_with("svc_1")
 
     @pytest.mark.asyncio
     async def test_start_service(self, mcp_server, mock_client):
         """start_service tool should call the client and succeed."""
-        results = await mcp_server.call_tool("start_service", {"service_id": "svc_1"})
-        assert results[1]["success"] is True
+        result = await mcp_server.call_tool("start_service", {"service_id": "svc_1"})
+        assert _tool_result_data(result)["success"] is True
         mock_client.start_service.assert_awaited_once_with("svc_1")
 
     @pytest.mark.asyncio
     async def test_scale_service(self, mcp_server, mock_client):
         """scale_service tool should forward cpu/memory to the client."""
-        results = await mcp_server.call_tool(
+        result = await mcp_server.call_tool(
             "scale_service", {"service_id": "svc_1", "cpu": 2, "memory": 4096}
         )
-        assert results[1]["success"] is True
+        assert _tool_result_data(result)["success"] is True
         mock_client.scale_service.assert_awaited_once_with("svc_1", cpu=2, memory=4096)
 
     @pytest.mark.asyncio
     async def test_get_system_stats(self, mcp_server):
         """get_system_stats tool should return the system stats."""
-        results = await mcp_server.call_tool("get_system_stats", {})
-        assert results[1]["success"] is True
-        assert results[1]["data"]["cpu"] == 10
+        result = await mcp_server.call_tool("get_system_stats", {})
+        res_data = _tool_result_data(result)
+        assert res_data["success"] is True
+        assert res_data["data"]["cpu"] == 10
 
     @pytest.mark.asyncio
     async def test_health_check(self, mcp_server):
         """health_check tool should report a healthy API."""
-        results = await mcp_server.call_tool("health_check", {})
-        assert results[1]["data"]["healthy"] is True
+        result = await mcp_server.call_tool("health_check", {})
+        assert _tool_result_data(result)["data"]["healthy"] is True
 
     @pytest.mark.asyncio
     async def test_list_domains(self, mcp_server):
         """list_domains tool should return domains."""
-        results = await mcp_server.call_tool("list_domains", {})
-        assert results[1]["success"] is True
-        assert results[1]["data"][0]["name"] == "app.example.com"
+        result = await mcp_server.call_tool("list_domains", {})
+        res_data = _tool_result_data(result)
+        assert res_data["success"] is True
+        assert res_data["data"][0]["name"] == "app.example.com"
 
 
 class TestRequestRouting:
