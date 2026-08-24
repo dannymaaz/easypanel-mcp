@@ -66,9 +66,12 @@ Issues = "https://github.com/dannymaaz/easypanel-mcp/issues"
 [project.scripts]
 easypanel-mcp = "src.server:main"
 
+[tool.setuptools]
+py-modules = ["config"]
+
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["src*", "config*"]
+include = ["src*"]
 
 [tool.ruff]
 line-length = 100
