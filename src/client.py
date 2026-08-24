@@ -66,7 +66,13 @@ class EasyPanelClient:
             )
             response.raise_for_status()
             result = response.json()
-            token = result.get("result", {}).get("data", {}).get("json", {}).get("token")
+            # EasyPanel returns either the tRPC-wrapped shape (result.data.json.token)
+            # or a bare {"json": {"token": ...}} depending on version.
+            token = (
+                result.get("result", {}).get("data", {}).get("json", {}).get("token")
+                or result.get("json", {}).get("token")
+                or result.get("token")
+            )
             
             if token:
                 self._token = token

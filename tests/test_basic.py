@@ -314,6 +314,52 @@ class TestRequestRouting:
         req.assert_awaited_once()
 
 
+class TestEmailPasswordAuth:
+    """Test tRPC email:password authentication."""
+
+    @pytest.fixture
+    def client(self):
+        """Create test client using email:password credentials."""
+        config = EasyPanelConfig(
+            base_url='http://test.com',
+            api_key='user@example.com:secret',
+            timeout=30
+        )
+        return EasyPanelClient(config)
+
+    def _stub_login(self, client, payload):
+        """Point the client at a stubbed auth.login response."""
+        response = MagicMock()
+        response.raise_for_status = MagicMock()
+        response.json = MagicMock(return_value=payload)
+        client._client = AsyncMock()
+        client._client.post = AsyncMock(return_value=response)
+        client._client.headers = {}
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("payload", [
+        {"result": {"data": {"json": {"token": "tok_123"}}}},
+        {"json": {"token": "tok_123"}},
+        {"token": "tok_123"},
+    ])
+    async def test_reads_token_from_known_response_shapes(self, client, payload):
+        """auth.login returns different shapes across EasyPanel versions."""
+        self._stub_login(client, payload)
+
+        await client._authenticate_with_email_password()
+
+        assert client._token == "tok_123"
+        assert client._client.headers["Authorization"] == "tok_123"
+
+    @pytest.mark.asyncio
+    async def test_missing_token_raises(self, client):
+        """A login response with no token is still an error."""
+        self._stub_login(client, {"result": {"data": {"json": {}}}})
+
+        with pytest.raises(RuntimeError, match="No token received"):
+            await client._authenticate_with_email_password()
+
+
 if __name__ == "__main__":
     import pytest
     pytest.main([__file__, "-v"])
