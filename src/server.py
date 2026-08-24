@@ -9,8 +9,19 @@ import logging
 import sys
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
+
+# When this file is executed directly (for example by an MCP client using an
+# absolute path to src/server.py), Python only adds the src/ directory to
+# sys.path. Add the repository root so project-local imports keep working no
+# matter which working directory the client launches from.
+if __package__ in (None, ""):
+    repository_root = str(Path(__file__).resolve().parents[1])
+    if repository_root not in sys.path:
+        sys.path.insert(0, repository_root)
 
 from mcp.server.fastmcp import FastMCP
+
 from config import config
 from src.client import EasyPanelClient
 from src.tools import register_all_tools
