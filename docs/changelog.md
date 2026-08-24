@@ -10,6 +10,43 @@ All notable changes to EasyPanel MCP.
 
 ---
 
+## [2.0.0] - 2026-08-24
+
+### 🚀 MCP SDK v2 migration
+
+This release migrates EasyPanel MCP to the stable 2.x line of the official MCP Python SDK.
+
+### Breaking changes
+
+- Replaced `FastMCP` with `MCPServer` from MCP Python SDK v2.
+- The `http` launch mode now uses **Streamable HTTP** at `/mcp` instead of being mapped internally to SSE.
+- MCP SDK support is now `mcp>=2.0.0,<3.0.0`.
+
+### Compatibility
+
+- `stdio` remains the default transport for local MCP clients.
+- `sse` remains available as an explicit legacy transport.
+- Streamable HTTP is the recommended remote transport for new integrations.
+- Tested with MCP Python SDK 2.1.0 on Python 3.10, 3.11 and 3.12.
+
+### Improvements
+
+- Added a portable installed CLI entrypoint: `easypanel-mcp`.
+- Direct execution of `src/server.py` now resolves project imports even when launched outside the repository working directory.
+- Improved EasyPanel `auth.login` compatibility by accepting wrapped, bare JSON and top-level token response shapes.
+- Updated tool integration tests for MCP v2 `CallToolResult` and structured tool output.
+- Added regression coverage for `stdio`, `http`/Streamable HTTP and `sse` transport selection.
+- Updated the n8n guide to use native MCP Client and MCP Client Tool nodes instead of manually constructed MCP requests.
+- Updated GitHub Actions to current major versions and consolidated CI dependency maintenance.
+- Improved README discovery links and security guidance.
+
+### Quality and release process
+
+- CI validates the test suite on Python 3.10, 3.11 and 3.12.
+- Release validation now also includes Ruff, mypy, strict MkDocs builds and Python package builds.
+
+---
+
 ## [1.0.0] - 2026-03-14
 
 ### 🎉 Initial Release
@@ -59,79 +96,34 @@ All notable changes to EasyPanel MCP.
 - Complete MkDocs documentation
 - Minimalist blue-themed design
 - SEO optimized
-- Integration guides:
-  - Claude Desktop
-  - n8n workflows
-  - GitHub Actions
+- Integration guides for Claude Desktop, n8n and GitHub Actions
 
 #### 🧪 Testing
 
-- Comprehensive test suite
-- Unit tests for all tools
-- Integration test examples
-- pytest configuration
-
-#### 🌐 Cross-Platform
-
-- Windows support
-- macOS support
-- Linux support
+- Unit and integration test coverage with pytest
+- Cross-platform support for Windows, macOS and Linux
 - Python 3.10+
-
----
-
-## 🔮 Planned Features
-
-### Next Releases
-
-- [ ] **v1.1.0** - Enhanced Monitoring
-  - Service metrics endpoint
-  - Performance monitoring
-  - Alert integrations
-
-- [ ] **v1.2.0** - Advanced Deployments
-  - Rolling updates
-  - Blue-green deployments
-  - Canary releases
-  - Auto-rollback
-
-- [ ] **v1.3.0** - Extended Tools
-  - Volume management
-  - Secret management
-  - Stack management
-  - Backup/restore
-
-- [ ] **v2.0.0** - Enterprise Features
-  - Multi-tenant support
-  - RBAC (Role-Based Access Control)
-  - Audit logging
-  - Advanced networking
 
 ---
 
 ## 📊 Version Compatibility
 
-| EasyPanel MCP | Python | EasyPanel | MCP Protocol |
-|---------------|--------|-----------|--------------|
-| 1.0.0         | 3.10+  | Any       | 2024-11-05   |
+| EasyPanel MCP | Python | EasyPanel | MCP Python SDK |
+|---------------|--------|-----------|----------------|
+| 2.0.0         | 3.10+  | Any       | >=2.0.0,<3.0.0 |
+| 1.0.0         | 3.10+  | Any       | 1.x |
 
 ---
 
 ## 🐛 Known Issues
 
-None at this time.
+No release-blocking issues are currently documented.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+Contributions are welcome. Please fork the repository, create a focused branch, add or update tests where appropriate, and submit a pull request.
 
 ---
 

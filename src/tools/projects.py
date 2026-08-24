@@ -26,7 +26,7 @@ def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
 
     @mcp.tool(
         name="list_projects",
-        annotations=ToolAnnotations(readOnlyHint=True),
+        annotations=ToolAnnotations(read_only_hint=True),
     )
     async def list_projects() -> dict[str, Any]:
         """List all projects in EasyPanel."""
@@ -39,7 +39,7 @@ def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
 
     @mcp.tool(
         name="get_project",
-        annotations=ToolAnnotations(readOnlyHint=True),
+        annotations=ToolAnnotations(read_only_hint=True),
     )
     async def get_project(project_id: str) -> dict[str, Any]:
         """
@@ -76,7 +76,7 @@ def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
 
     @mcp.tool(
         name="delete_project",
-        annotations=ToolAnnotations(destructiveHint=True, idempotentHint=True),
+        annotations=ToolAnnotations(destructive_hint=True, idempotent_hint=True),
     )
     async def delete_project(project_id: str) -> dict[str, Any]:
         """

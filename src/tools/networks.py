@@ -26,7 +26,7 @@ def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
 
     @mcp.tool(
         name="list_networks",
-        annotations=ToolAnnotations(readOnlyHint=True),
+        annotations=ToolAnnotations(read_only_hint=True),
     )
     async def list_networks() -> dict[str, Any]:
         """
@@ -45,7 +45,7 @@ def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
 
     @mcp.tool(
         name="create_network",
-        annotations=ToolAnnotations(readOnlyHint=True),
+        annotations=ToolAnnotations(read_only_hint=True),
     )
     async def create_network(
         name: str,
@@ -79,7 +79,7 @@ def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
 
     @mcp.tool(
         name="delete_network",
-        annotations=ToolAnnotations(readOnlyHint=True),
+        annotations=ToolAnnotations(read_only_hint=True),
     )
     async def delete_network(network_id: str) -> dict[str, Any]:
         """

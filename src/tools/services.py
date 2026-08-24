@@ -26,7 +26,7 @@ def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
 
     @mcp.tool(
         name="list_services",
-        annotations=ToolAnnotations(readOnlyHint=True),
+        annotations=ToolAnnotations(read_only_hint=True),
     )
     async def list_services(project_id: Optional[str] = None) -> dict[str, Any]:
         """
@@ -44,7 +44,7 @@ def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
 
     @mcp.tool(
         name="get_service",
-        annotations=ToolAnnotations(readOnlyHint=True),
+        annotations=ToolAnnotations(read_only_hint=True),
     )
     async def get_service(service_id: str) -> dict[str, Any]:
         """
@@ -90,7 +90,7 @@ def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
 
     @mcp.tool(
         name="update_service",
-        annotations=ToolAnnotations(idempotentHint=True),
+        annotations=ToolAnnotations(idempotent_hint=True),
     )
     async def update_service(service_id: str, config: dict[str, Any]) -> dict[str, Any]:
         """
@@ -109,7 +109,7 @@ def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
 
     @mcp.tool(
         name="delete_service",
-        annotations=ToolAnnotations(destructiveHint=True, idempotentHint=True),
+        annotations=ToolAnnotations(destructive_hint=True, idempotent_hint=True),
     )
     async def delete_service(service_id: str) -> dict[str, Any]:
         """
@@ -142,7 +142,7 @@ def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
 
     @mcp.tool(
         name="start_service",
-        annotations=ToolAnnotations(idempotentHint=True),
+        annotations=ToolAnnotations(idempotent_hint=True),
     )
     async def start_service(service_id: str) -> dict[str, Any]:
         """
@@ -160,7 +160,7 @@ def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
 
     @mcp.tool(
         name="stop_service",
-        annotations=ToolAnnotations(destructiveHint=True, idempotentHint=True),
+        annotations=ToolAnnotations(destructive_hint=True, idempotent_hint=True),
     )
     async def stop_service(service_id: str) -> dict[str, Any]:
         """
@@ -193,7 +193,7 @@ def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
 
     @mcp.tool(
         name="scale_service",
-        annotations=ToolAnnotations(idempotentHint=True),
+        annotations=ToolAnnotations(idempotent_hint=True),
     )
     async def scale_service(
         service_id: str,
@@ -250,7 +250,7 @@ def register_tools(mcp: MCPServer, client: EasyPanelClient) -> None:
 
     @mcp.tool(
         name="get_service_logs",
-        annotations=ToolAnnotations(readOnlyHint=True),
+        annotations=ToolAnnotations(read_only_hint=True),
     )
     async def get_service_logs(service_id: str, lines: int = 100) -> dict[str, Any]:
         """
