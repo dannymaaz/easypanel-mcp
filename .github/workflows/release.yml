@@ -93,6 +93,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "Release $RELEASE_TAG already exists; nothing to publish."
+            exit 0
+          fi
+
           args=(
             release create "$RELEASE_TAG"
             dist/*
