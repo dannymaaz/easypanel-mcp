@@ -12,6 +12,9 @@ on:
         required: true
         default: false
         type: boolean
+  push:
+    branches:
+      - "release/publish-*"
 
 permissions:
   contents: write
@@ -25,15 +28,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: main
 
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
           cache: pip
 
-      - name: Validate requested tag
+      - name: Resolve release inputs
         env:
-          RELEASE_TAG: ${{ inputs.tag }}
+          INPUT_TAG: ${{ inputs.tag }}
+          INPUT_PRERELEASE: ${{ inputs.prerelease }}
         run: |
           PACKAGE_VERSION=$(python - <<'PY'
           import tomllib
@@ -42,6 +48,21 @@ jobs:
               print(tomllib.load(file)["project"]["version"])
           PY
           )
+
+          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
+            RELEASE_TAG="$INPUT_TAG"
+            PRERELEASE="$INPUT_PRERELEASE"
+          else
+            RELEASE_TAG="v${PACKAGE_VERSION}"
+            PRERELEASE="false"
+          fi
+
+          echo "RELEASE_TAG=$RELEASE_TAG" >> "$GITHUB_ENV"
+          echo "PRERELEASE=$PRERELEASE" >> "$GITHUB_ENV"
+          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> "$GITHUB_ENV"
+
+      - name: Validate requested tag
+        run: |
           EXPECTED_TAG="v${PACKAGE_VERSION}"
           if [[ "$RELEASE_TAG" != "$EXPECTED_TAG" ]]; then
             echo "Requested tag '$RELEASE_TAG' does not match pyproject.toml version '$EXPECTED_TAG'."
@@ -71,13 +92,11 @@ jobs:
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ inputs.tag }}
-          PRERELEASE: ${{ inputs.prerelease }}
         run: |
           args=(
             release create "$RELEASE_TAG"
             dist/*
-            --target "$GITHUB_SHA"
+            --target main
             --title "EasyPanel MCP $RELEASE_TAG"
             --generate-notes
           )
